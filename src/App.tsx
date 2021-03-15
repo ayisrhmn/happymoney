@@ -26,7 +26,7 @@ const App = () => {
     roundness: 2,
     colors: {
       ...DefaultTheme.colors,
-      primary: Colors.SHADES.dark[20],
+      primary: Colors.PRIMARY,
     },
   };
 

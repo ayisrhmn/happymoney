@@ -1,7 +1,7 @@
 import React from 'react';
-import {View, StyleSheet} from 'react-native';
+import {StyleSheet} from 'react-native';
 import {Appbar} from 'react-native-paper';
-import {Colors, Mixins} from 'utils';
+import {Colors, Mixins} from '@utils/index';
 
 interface Props {
   navigation?: any;
@@ -9,7 +9,7 @@ interface Props {
   showNotification?: boolean;
   showSearch?: boolean;
   showFilter?: boolean;
-}
+};
 
 const Header: React.FC<Props> = ({navigation, scene}) => {
   var title = scene.descriptor.options.headerTitle;
@@ -40,11 +40,11 @@ const Header: React.FC<Props> = ({navigation, scene}) => {
   }, [scene]);
 
   return (
-    <Appbar.Header>
-      {['Home', 'Login'].indexOf(scene.route.name) < 0 && (
+    <Appbar.Header style={styles.headerContainer}>
+      {['SignIn', 'SignUp', 'Home'].indexOf(scene.route.name) < 0 && (
         <Appbar.BackAction
 					onPress={() => navigation.goBack()}
-					color={Colors.BLACK}
+					color={Colors.WHITE}
 				/>
       )}
       {left}
@@ -58,9 +58,12 @@ const Header: React.FC<Props> = ({navigation, scene}) => {
 };
 
 const styles = StyleSheet.create({
+	headerContainer: {
+		height: Mixins.scaleSize(42),
+	},
   headerContent: {
-    fontSize: Mixins.scaleFont(18),
-    color: Colors.BLACK,
+    fontSize: Mixins.scaleFont(20),
+    color: Colors.WHITE,
   },
 });
 

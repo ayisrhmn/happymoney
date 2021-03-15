@@ -6,8 +6,12 @@ import {createStackNavigator} from '@react-navigation/stack';
 import Header from '@components/header';
 
 import Splash from '@screen/Splash';
-import Login from '@screen/Login';
+import SignIn from '@screen/SignIn';
+import SignUp from '@screen/SignUp';
+
 import Home from '@screen/Home';
+import Transactions from '@screen/Transactions';
+import Profile from '@screen/Profile';
 
 const Stack = createStackNavigator();
 
@@ -15,14 +19,14 @@ function App() {
   return (
     <NavigationContainer>
       <Stack.Navigator
-        initialRouteName="Splash"
-        headerMode="screen"
+        initialRouteName={'Splash'}
+        headerMode={'screen'}
         screenOptions={{
           header: (props) => <Header {...props} />,
         }}>
 
 				<Stack.Screen
-          name="Splash"
+          name={'Splash'}
           component={Splash}
           options={{
             headerShown: false,
@@ -30,18 +34,42 @@ function App() {
         />
 
 				<Stack.Screen
-          name="Login"
-          component={Login}
+          name={'SignIn'}
+          component={SignIn}
           options={{
-            headerTitle: 'Login',
+            headerTitle: 'Sign In',
           }}
         />
 
-        <Stack.Screen
-          name="Home"
+				<Stack.Screen
+          name={'SignUp'}
+          component={SignUp}
+          options={{
+            headerTitle: 'Sign Up',
+          }}
+        />
+
+				<Stack.Screen
+          name={'Home'}
           component={Home}
           options={{
             headerTitle: 'HappyMoney',
+          }}
+        />
+
+				<Stack.Screen
+          name={'Transactions'}
+          component={Transactions}
+          options={{
+            headerTitle: 'Transactions',
+          }}
+        />
+
+				<Stack.Screen
+          name={'Profile'}
+          component={Profile}
+          options={{
+            headerTitle: 'Profile',
           }}
         />
 

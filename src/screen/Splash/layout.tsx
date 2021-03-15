@@ -1,8 +1,7 @@
 import React from 'react';
-import {View, StyleSheet, Text} from 'react-native';
+import {View, StyleSheet, Text, StatusBar} from 'react-native';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 
-import container from '@components/container';
 import {Colors, Mixins} from '@utils/index';
 
 type Props = {
@@ -14,26 +13,32 @@ const Layout: React.FC<Props> = (props) => {
 
 	React.useEffect(() => {
 		setTimeout(() => {
-			navigation.replace('Login');
+			navigation.replace('SignIn');
 		}, 3000);
 
 		return () => {};
 	}, []);
 
   return (
-    <View style={styles.container}>
-			<Ionicons
-				name={'wallet'}
-				size={Mixins.scaleFont(72)}
-				color={Colors.PRIMARY}
+		<>
+			<StatusBar
+				barStyle="dark-content"
+				backgroundColor={Colors.WHITE}
 			/>
-      <Text style={styles.appName}>
-				HappyMoney
-			</Text>
-			<Text style={styles.tagline}>
-				Budget {'&'} Expenses Tracker
-			</Text>
-    </View>
+			<View style={styles.container}>
+				<Ionicons
+					name={'wallet'}
+					size={Mixins.scaleFont(72)}
+					color={Colors.PRIMARY}
+				/>
+				<Text style={styles.appName}>
+					HappyMoney
+				</Text>
+				<Text style={styles.tagline}>
+					Budget {'&'} Expenses Tracker
+				</Text>
+			</View>
+		</>
   );
 };
 
@@ -56,4 +61,4 @@ const styles = StyleSheet.create({
 	},
 });
 
-export default container(Layout, false, Colors.SHADES.dark[20]);
+export default Layout;
