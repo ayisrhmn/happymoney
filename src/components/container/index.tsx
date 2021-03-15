@@ -10,7 +10,7 @@ import {Colors} from '@utils/index';
 interface iCallbackState {
   routeName?: string;
   func: () => Promise<any>;
-}
+};
 
 export const ContainerContext = React.createContext({
   isRefreshing: false,
@@ -24,12 +24,12 @@ export const ContainerContext = React.createContext({
 
 interface hocProps {
   children: any;
-}
+};
 
 const container = (
   Comp: any,
   isScrollView: boolean = true,
-  bgColor: string = '#ECECEC',
+  bgColor: string = Colors.WHITE,
 ) => ({children, ...props}: hocProps) => {
   const [isRefreshing, setIsRefreshing] = React.useState(false);
   const [callbacks, setClbks] = React.useState<iCallbackState[]>([]);
@@ -94,7 +94,7 @@ const container = (
     <>
       <StatusBar
         barStyle="light-content"
-        backgroundColor={Colors.PRIMARY.green}
+        backgroundColor={Colors.PRIMARY}
       />
       {/* eslint-disable-next-line react-native/no-inline-styles */}
       <SafeAreaView style={{flex: 1, backgroundColor: bgColor}}>

@@ -1,8 +1,12 @@
 export const PRIMARY = '#104E5B';
 export const SECONDARY = '#FDC27A';
 
-export const WHITE = '#FFFFFF';
+export const WHITE = '#F2F6F7';
 export const BLACK = '#44464B';
+
+export const SUCCESS = '#77ba61';
+export const WARNING = '#EDA623';
+export const ALERT = '#B52B4F';
 
 export const SHADES = {
   purple: {
@@ -26,13 +30,9 @@ export const SHADES = {
 		100: '#000000',
 		80: '#313131',
 		60: '#44464B',
-		40: '#D5D5D5',
+		40: '#b5b5b5',
 		20: '#F2F6F7',
+		10: 'rgba(242, 246, 247, 0.5)',
 		0: '#FFFFFF',
 	},
 };
-
-// ACTIONS
-export const SUCCESS = '#77ba61';
-export const WARNING = '#EDA623';
-export const ALERT = '#B52B4F';
