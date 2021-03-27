@@ -19,7 +19,7 @@ const Layout: React.FC<Props> = (props) => {
 					Hello,
 				</Text>
 				<Text style={styles.welcomeText}>
-					{data.name}
+					{data.user_data.name}
 				</Text>
 			</View>
 
