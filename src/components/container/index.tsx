@@ -29,7 +29,7 @@ interface hocProps {
 const container = (
   Comp: any,
   isScrollView: boolean = true,
-  bgColor: string = Colors.WHITE,
+  bgColor: string = Colors.SHADES.dark[30],
 ) => ({children, ...props}: hocProps) => {
   const [isRefreshing, setIsRefreshing] = React.useState(false);
   const [callbacks, setClbks] = React.useState<iCallbackState[]>([]);

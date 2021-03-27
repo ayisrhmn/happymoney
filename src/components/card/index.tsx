@@ -27,14 +27,6 @@ const styles = StyleSheet.create({
 		backgroundColor: Colors.WHITE,
 		padding: Mixins.scaleSize(14),
 		borderRadius: Mixins.scaleSize(6),
-		shadowColor: Colors.BLACK,
-		shadowOffset: {
-			width: Mixins.scaleSize(0),
-			height: Mixins.scaleSize(2),
-		},
-		shadowOpacity: Mixins.scaleSize(0.23),
-		shadowRadius: Mixins.scaleSize(2.62),
-		elevation: Mixins.scaleSize(4),
 		marginBottom: Mixins.scaleSize(16),
 	},
 });
