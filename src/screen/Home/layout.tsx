@@ -14,15 +14,16 @@ type Props = {
 const Layout: React.FC<Props> = (props) => {
   const {navigation} = props;
 
-	const user_data = {
-		name: 'Muhammad Fariz Rahman'
-	};
-
-	const summary_data = {
-		date: new Date(),
-		balance: 5760000,
-		debit: 5760000,
-		credit: 500000,
+	const dummyData = {
+		user_data: {
+			name: 'Muhammad Fariz Rahman',
+		},
+		summary_data: {
+			date: new Date(),
+			balance: 5760000,
+			debit: 5760000,
+			credit: 500000,
+		}
 	}
 
 	React.useEffect(() => {
@@ -32,9 +33,9 @@ const Layout: React.FC<Props> = (props) => {
 
   return (
     <View>
-			<HomeHeader data={user_data} navigation={navigation} />
+			<HomeHeader data={dummyData} navigation={navigation} />
 
-      <CardSummary data={summary_data} />
+      <CardSummary data={dummyData} />
 
       <CardTransactions navigation={navigation} />
     </View>

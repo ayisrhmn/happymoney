@@ -27,7 +27,7 @@ const Layout: React.FC<Props> = (props) => {
 						color={Colors.SUCCESS}
 					/>
 					<Text style={styles.time}>
-						{moment(data.date).format('MMM-YYYY')}
+						{moment(data.summary_data.date).format('MMM-YYYY')}
 					</Text>
 				</View>
 			</View>
@@ -37,7 +37,7 @@ const Layout: React.FC<Props> = (props) => {
 					Balance
 				</Text>
 				<Text style={styles.title}>
-					{Helper.numberWithSeparator(data.balance)}
+					{Helper.numberWithSeparator(data.summary_data.balance)}
 				</Text>
 			</View>
 			<View style={[styles.row, styles.space]}>
@@ -45,7 +45,7 @@ const Layout: React.FC<Props> = (props) => {
 					Biggest Debit
 				</Text>
 				<Text style={styles.title}>
-					{Helper.numberWithSeparator(data.debit)}
+					{Helper.numberWithSeparator(data.summary_data.debit)}
 				</Text>
 			</View>
 			<View style={[styles.row, styles.space]}>
@@ -53,7 +53,7 @@ const Layout: React.FC<Props> = (props) => {
 					Biggest Credit
 				</Text>
 				<Text style={styles.title}>
-					{Helper.numberWithSeparator(data.credit)}
+					{Helper.numberWithSeparator(data.summary_data.credit)}
 				</Text>
 			</View>
 		</Card>
@@ -68,7 +68,7 @@ const styles = StyleSheet.create({
 		justifyContent: 'space-between',
 	},
 	cardContainer: {
-		marginHorizontal: Mixins.scaleSize(14),
+		marginHorizontal: Mixins.scaleSize(12),
 	},
 	summary: {
 		justifyContent: 'space-between',

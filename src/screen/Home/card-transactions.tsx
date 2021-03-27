@@ -52,7 +52,7 @@ const styles = StyleSheet.create({
 		justifyContent: 'space-between',
 	},
 	cardContainer: {
-		marginHorizontal: Mixins.scaleSize(14),
+		marginHorizontal: Mixins.scaleSize(12),
 	},
 	titleBig: {
 		color: Colors.BLACK,
