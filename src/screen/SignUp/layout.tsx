@@ -97,4 +97,4 @@ const styles = StyleSheet.create({
 	},
 });
 
-export default container(Layout);
+export default container(Layout, true, Colors.WHITE);

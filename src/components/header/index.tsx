@@ -60,6 +60,7 @@ const Header: React.FC<Props> = ({navigation, scene}) => {
 const styles = StyleSheet.create({
 	headerContainer: {
 		height: Mixins.scaleSize(42),
+		paddingRight: Mixins.scaleSize(16),
 	},
   headerContent: {
     fontSize: Mixins.scaleFont(20),
