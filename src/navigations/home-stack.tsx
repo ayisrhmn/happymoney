@@ -10,6 +10,7 @@ import SignIn from '@screen/SignIn';
 import SignUp from '@screen/SignUp';
 
 import Home from '@screen/Home';
+import Category from '@screen/Category';
 import Transactions from '@screen/Transactions';
 import Profile from '@screen/Profile';
 
@@ -54,6 +55,14 @@ function App() {
           component={Home}
           options={{
             headerTitle: 'HappyMoney',
+          }}
+        />
+
+				<Stack.Screen
+          name={'Category'}
+          component={Category}
+          options={{
+            headerTitle: 'Category',
           }}
         />
 

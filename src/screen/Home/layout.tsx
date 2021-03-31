@@ -5,6 +5,7 @@ import container from '@components/container';
 
 import HomeHeader from './home-header';
 import CardSummary from './card-summary';
+import CardCategory from './card-category';
 import CardTransactions from './card-transactions';
 
 type Props = {
@@ -37,7 +38,9 @@ const Layout: React.FC<Props> = (props) => {
 
       <CardSummary data={dummyData} />
 
-      <CardTransactions navigation={navigation} />
+      <CardCategory navigation={navigation} />
+
+			<CardTransactions navigation={navigation} />
     </View>
   );
 };
