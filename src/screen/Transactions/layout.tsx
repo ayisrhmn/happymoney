@@ -24,7 +24,7 @@ type Props = {
 const Layout: React.FC<Props> = (props) => {
   const {navigation} = props;
 
-	const [filter, setFilter] = React.useState('All')
+	const [filter, setFilter] = React.useState('All');
 	const [date, setDate] = React.useState(new Date());
 	const [displayDate, setDisplayDate] = React.useState('');
 	const [selectedMonth, setSelectedMonth] = React.useState(

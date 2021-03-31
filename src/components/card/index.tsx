@@ -27,7 +27,7 @@ const styles = StyleSheet.create({
 		backgroundColor: Colors.WHITE,
 		padding: Mixins.scaleSize(14),
 		borderRadius: Mixins.scaleSize(6),
-		marginBottom: Mixins.scaleSize(16),
+		marginBottom: Mixins.scaleSize(12),
 	},
 });
 
