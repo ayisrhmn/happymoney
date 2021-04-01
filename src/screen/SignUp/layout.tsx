@@ -41,34 +41,38 @@ const Layout: React.FC<Props> = (props) => {
     <View style={styles.container}>
 			<View style={styles.inputWrapper}>
 				<Input
-					mode={'flat'}
-					label={'Full Name'}
+					mode={'outlined'}
+					name={'Full Name'}
+					placeholder={'e.g. Peter Parker'}
 					value={name}
 					onChangeText={text => setName(text)}
 				/>
 				<Input
-					mode={'flat'}
-					label={'Email Address'}
+					mode={'outlined'}
+					name={'Email Address'}
+					placeholder={'e.g. youremail@happymoney.com'}
 					value={email}
 					onChangeText={text => setEmail(text)}
 				/>
 				<Input
-					mode={'flat'}
-					label={'Password'}
+					mode={'outlined'}
+					name={'Password'}
+					placeholder={'Type your password'}
 					value={password}
-					onChangeText={text => setPassword(text)}
-					secureTextEntry={secure}
 					password={true}
+					secureTextEntry={secure}
 					onSecure={() => setSecure(!secure)}
+					onChangeText={text => setPassword(text)}
 				/>
 				<Input
-					mode={'flat'}
-					label={'Confirm Password'}
+					mode={'outlined'}
+					name={'Confirm Password'}
+					placeholder={'Type again your password'}
 					value={confirmPswd}
-					onChangeText={text => setConfirmPswd(text)}
-					secureTextEntry={secureConf}
 					password={true}
+					secureTextEntry={secureConf}
 					onSecure={() => setSecureConf(!secureConf)}
+					onChangeText={text => setConfirmPswd(text)}
 				/>
 			</View>
 
@@ -88,7 +92,7 @@ const styles = StyleSheet.create({
 		padding: Mixins.scaleSize(12),
   },
 	inputWrapper: {
-		marginBottom: Mixins.scaleSize(40),
+		marginBottom: Mixins.scaleSize(30),
 	},
 	rightAct: {
 		color: Colors.SECONDARY,

@@ -12,6 +12,7 @@ import SignUp from '@screen/SignUp';
 import Home from '@screen/Home';
 import Category from '@screen/Category';
 import Transactions from '@screen/Transactions';
+import TransactionForm from '@screen/TransactionForm';
 import Profile from '@screen/Profile';
 
 const Stack = createStackNavigator();
@@ -71,6 +72,14 @@ function App() {
           component={Transactions}
           options={{
             headerTitle: 'Transactions',
+          }}
+        />
+
+				<Stack.Screen
+          name={'TransactionForm'}
+          component={TransactionForm}
+          options={{
+            headerTitle: 'Add Transaction',
           }}
         />
 
