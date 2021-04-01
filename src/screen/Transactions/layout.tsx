@@ -37,7 +37,7 @@ const Layout: React.FC<Props> = (props) => {
       headerRight: () => {
 				return (
 					<TouchableOpacity
-						onPress={() => console.warn('goes to add transactions')}
+						onPress={() => navigation.navigate('TransactionForm')}
 					>
 						<MaterialIcons
 							name={'add'}

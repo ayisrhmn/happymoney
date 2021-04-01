@@ -38,19 +38,21 @@ const Layout: React.FC<Props> = (props) => {
     <View style={styles.container}>
 			<View style={styles.inputWrapper}>
 				<Input
-					mode={'flat'}
-					label={'Email Address'}
+					mode={'outlined'}
+					name={'Email Address'}
+					placeholder={'e.g. youremail@happymoney.com'}
 					value={email}
 					onChangeText={text => setEmail(text)}
 				/>
 				<Input
-					mode={'flat'}
-					label={'Password'}
+					mode={'outlined'}
+					name={'Password'}
+					placeholder={'Type your password'}
 					value={password}
-					onChangeText={text => setPassword(text)}
-					secureTextEntry={secure}
 					password={true}
+					secureTextEntry={secure}
 					onSecure={() => setSecure(!secure)}
+					onChangeText={text => setPassword(text)}
 				/>
 			</View>
 
@@ -70,7 +72,7 @@ const styles = StyleSheet.create({
 		padding: Mixins.scaleSize(12),
   },
 	inputWrapper: {
-		marginBottom: Mixins.scaleSize(40),
+		marginBottom: Mixins.scaleSize(30),
 	},
 	rightAct: {
 		color: Colors.SECONDARY,

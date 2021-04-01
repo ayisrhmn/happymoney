@@ -114,8 +114,9 @@ const Layout: React.FC<Props> = (props) => {
 
 				<View style={styles.modalBody}>
 					<Input
-						mode={'flat'}
-						label={'Category Name'}
+						mode={'outlined'}
+						name={'Category Name'}
+						placeholder={'e.g. Holiday'}
 						value={category}
 						onChangeText={text => setCategory(text)}
 					/>
