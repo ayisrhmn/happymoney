@@ -1,5 +1,6 @@
 import React from 'react';
 import {View, StyleSheet} from 'react-native';
+import DateTimePickerModal from "react-native-modal-datetime-picker";
 
 import container from '@components/container';
 import Input from '@components/input';
@@ -23,6 +24,9 @@ const Layout: React.FC<Props> = (props) => {
 	const [category, setCategory] = React.useState('');
 	const [typeData, setTypeData] = React.useState([]) as any;
 	const [type, setType] = React.useState('');
+	const [showDatePicker, setShowDatePicker] = React.useState(false);
+	const [dateValue, setDateValue] = React.useState(new Date());
+	const [modalDate, setModalDate] = React.useState('');
 	const [email, setEmail] = React.useState('');
 
 	React.useEffect(() => {
@@ -30,6 +34,13 @@ const Layout: React.FC<Props> = (props) => {
 
 		return () => {};
 	}, []);
+
+	const confirmDatePicker = (d: Date) => {
+    setShowDatePicker(false);
+    const displayD = moment(d).format('DD-MMM-YYYY');
+    setModalDate(displayD);
+    setDateValue(d);
+  };
 
 	const getData = () => {
 		setCategoryData([
@@ -42,6 +53,8 @@ const Layout: React.FC<Props> = (props) => {
 			'Debit',
 			'Credit',
 		]);
+
+		setModalDate(moment().format('DD-MMM-YYYY'));
 	};
 
   return (
@@ -55,6 +68,7 @@ const Layout: React.FC<Props> = (props) => {
 					value={desc}
 					onChangeText={text => setDesc(text)}
 				/>
+
 				<Select
 					name={'Category'}
 					placeholder={'Select your category transaction'}
@@ -63,6 +77,7 @@ const Layout: React.FC<Props> = (props) => {
 					// error={errors.category}
 					onSelect={(text: string) => setCategory(text)}
 				/>
+
 				<Input
 					mode={'outlined'}
 					name={'Total Transactions'}
@@ -71,6 +86,7 @@ const Layout: React.FC<Props> = (props) => {
 					keyboardType={'numeric'}
 					onChangeText={text => setTotal({...total, total: parseInt(text)})}
 				/>
+
 				<Select
 					name={'Type'}
 					placeholder={'Select your type Debit or Credit'}
@@ -79,12 +95,21 @@ const Layout: React.FC<Props> = (props) => {
 					// error={errors.category}
 					onSelect={(text: string) => setType(text)}
 				/>
+
 				<Input
 					mode={'outlined'}
+					date={true}
 					name={'Date Transaction'}
-					placeholder={moment(new Date()).format('DD-MMM-YYYY')}
-					value={email}
-					onChangeText={text => setEmail(text)}
+					value={modalDate}
+					onPress={() => setShowDatePicker(true)}
+				/>
+
+				<DateTimePickerModal
+					isVisible={showDatePicker}
+					date={dateValue}
+					mode={'date'}
+					onConfirm={confirmDatePicker}
+					onCancel={() => setShowDatePicker(false)}
 				/>
 			</View>
 

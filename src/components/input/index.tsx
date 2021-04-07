@@ -19,9 +19,11 @@ interface Props {
 	setFocus?: any;
   placeholder?: any;
   value?: any;
+	error?: any;
 	secureTextEntry?: boolean;
 	password?: boolean;
 	select?: boolean;
+	date?: boolean;
 	multiline?: boolean;
 	mask?: any;
 	keyboardType?: any | 'default';
@@ -43,8 +45,8 @@ const Input: React.FC<Props> = (props) => {
 	const [focus, setFocus] = React.useState(false);
 
   return (
-		<>
-			{!props?.password && !props?.select && (
+		<View style={styles.inputWrapper}>
+			{(!props?.password && !props?.select && !props?.date) && (
 				<InputText
 					{...props}
 					focus={focus}
@@ -82,7 +84,41 @@ const Input: React.FC<Props> = (props) => {
 					)}
 				</>
 			)}
-		</>
+
+			{props?.date && (
+				<>
+					{props?.onPress !== undefined && (
+						<View>
+							<TouchableOpacity onPress={props?.onPress} style={styles.touchable} />
+							<InputDate
+								{...props}
+								focus={focus}
+								setFocus={setFocus}
+							/>
+						</View>
+					)}
+
+					{props?.onPress === undefined && (
+						<InputDate
+							{...props}
+							focus={focus}
+							setFocus={setFocus}
+						/>
+					)}
+				</>
+			)}
+
+			{props?.error && (
+        <Text
+          style={{
+            fontSize: Mixins.scaleFont(12),
+            paddingTop: Mixins.scaleSize(3),
+            color: Colors.ALERT,
+          }}>
+          {props.error.message}
+        </Text>
+      )}
+		</View>
   );
 };
 
@@ -100,11 +136,7 @@ const InputText: React.FC<Props> = (props) => {
 				{...props}
 				placeholderTextColor={Colors.SHADES.dark[50]}
 				selectionColor={Colors.SHADES.dark[40]}
-				style={
-					!props?.multiline
-						? styles.input
-						: styles.inputTextArea
-				}
+				style={styles.input}
 				theme={inputTheme}
 				onFocus={() => props?.setFocus(true)}
 				onBlur={() => props?.setFocus(false)}
@@ -142,7 +174,6 @@ const InputPassword: React.FC<Props> = (props) => {
 									? 'eye-off-outline'
 									: 'eye-outline'}
 						color={props?.focus ? Colors.PRIMARY : Colors.BLACK}
-						style={{marginTop: Mixins.scaleSize(12)}}
 						onPress={props?.onSecure}
 					/>
 				}
@@ -173,7 +204,6 @@ const InputSelect: React.FC<Props> = (props) => {
 					<TextInput.Icon
 						name={'chevron-down'}
 						color={Colors.BLACK}
-						style={{marginTop: Mixins.scaleSize(12)}}
 					/>
 				}
 			/>
@@ -181,24 +211,43 @@ const InputSelect: React.FC<Props> = (props) => {
   );
 };
 
+const InputDate: React.FC<Props> = (props) => {
+  return (
+		<>
+			<Text style={
+				props?.focus
+					? [styles.labelActive]
+					: [styles.label]
+			}>
+				{props?.name}
+			</Text>
+			<TextInput
+				{...props}
+				placeholderTextColor={Colors.SHADES.dark[50]}
+				selectionColor={Colors.SHADES.dark[40]}
+				style={styles.input}
+				theme={inputTheme}
+				onFocus={() => props?.setFocus(true)}
+				onBlur={() => props?.setFocus(false)}
+			/>
+		</>
+  );
+};
+
 const styles = StyleSheet.create({
 	label: {
-		fontSize: Mixins.scaleFont(12),
+		fontSize: Mixins.scaleFont(14),
 		color: Colors.BLACK,
 	},
 	labelActive: {
-		fontSize: Mixins.scaleFont(12),
+		fontSize: Mixins.scaleFont(14),
 		fontWeight: 'bold',
 		color: Colors.PRIMARY,
 	},
-  input: {
-		height: Mixins.scaleSize(40),
-		maxHeight: Mixins.scaleSize(40),
-		marginBottom: Mixins.scaleSize(20),
-		backgroundColor: 'transparent',
+	inputWrapper: {
+		marginBottom: Mixins.scaleSize(14),
 	},
-	inputTextArea: {
-		marginBottom: Mixins.scaleSize(10),
+  input: {
 		backgroundColor: 'transparent',
 	},
 	touchable: {
