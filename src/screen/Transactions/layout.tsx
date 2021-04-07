@@ -119,7 +119,7 @@ const Layout: React.FC<Props> = (props) => {
 						mode="monthYear"
 						selectorStartingYear={2000}
 						current={selectedMonth}
-						onMonthYearChange={(selectedDate) => handleConfirm(selectedDate)}
+						onMonthYearChange={(selectedDate: any) => handleConfirm(selectedDate)}
 						options={{
 							textHeaderColor: Colors.PRIMARY,
 							mainColor: Colors.PRIMARY,
@@ -225,7 +225,7 @@ const Layout: React.FC<Props> = (props) => {
 									color={Colors.SHADES.dark[50]}
 								/>
 								<Text style={styles.cardText}>
-									{moment(data.created_on).fromNow()}
+									{moment(data.created_on).format('DD-MMM-YYYY')}
 								</Text>
 							</View>
 						</View>

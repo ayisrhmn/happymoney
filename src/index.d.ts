@@ -1,4 +1,5 @@
 declare module '*.png';
+declare module '@env';
 declare module 'moment';
 declare module 'react-native-vector-icons/AntDesign';
 declare module 'react-native-vector-icons/MaterialCommunityIcons';
