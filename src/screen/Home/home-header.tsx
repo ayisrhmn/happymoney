@@ -6,11 +6,11 @@ import {Colors, Mixins} from '@utils/index';
 
 type Props = {
   navigation: any;
-	data: any;
+	user: any;
 };
 
 const Layout: React.FC<Props> = (props) => {
-  const {navigation, data} = props;
+  const {navigation, user} = props;
 
   return (
 		<View style={styles.header}>
@@ -19,12 +19,12 @@ const Layout: React.FC<Props> = (props) => {
 					Hello,
 				</Text>
 				<Text style={styles.welcomeText}>
-					{data.user_data.name}
+					{user?.name}
 				</Text>
 			</View>
 
 			<TouchableOpacity
-				onPress={() => navigation.navigate('Profile')}
+				onPress={() => navigation.navigate('Profile', user)}
 			>
 				<Ionicons
 					name={'person-circle'}

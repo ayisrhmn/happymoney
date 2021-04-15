@@ -3,6 +3,7 @@ import {View, StyleSheet, Text, StatusBar} from 'react-native';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 
 import {Colors, Mixins} from '@utils/index';
+import firebase from '@database/firebase';
 
 type Props = {
   navigation: any;
@@ -12,12 +13,18 @@ const Layout: React.FC<Props> = (props) => {
   const {navigation} = props;
 
 	React.useEffect(() => {
-		setTimeout(() => {
-			navigation.replace('SignIn');
-		}, 3000);
+		const unsubscribe = firebase.auth().onAuthStateChanged((user) => {
+			setTimeout(() => {
+				if (user) {
+					navigation.replace('Home');
+				} else {
+					navigation.replace('SignIn');
+				}
+			}, 3000);
+		})
 
-		return () => {};
-	}, []);
+		return () => unsubscribe();
+	}, [navigation]);
 
   return (
 		<>

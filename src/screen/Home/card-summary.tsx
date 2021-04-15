@@ -1,5 +1,6 @@
 import React from 'react';
 import {View, StyleSheet, Text} from 'react-native';
+import {ActivityIndicator} from 'react-native-paper'
 import Ionicons from 'react-native-vector-icons/Ionicons';
 
 import Card from '@components/card';
@@ -9,10 +10,11 @@ import moment from 'moment';
 
 type Props = {
 	data: any;
+	refresh: any;
 };
 
 const Layout: React.FC<Props> = (props) => {
-  const {data} = props;
+  const {data, refresh} = props;
 
   return (
 		<Card style={styles.cardContainer}>
@@ -32,30 +34,43 @@ const Layout: React.FC<Props> = (props) => {
 				</View>
 			</View>
 
-			<View style={[styles.row, styles.space]}>
-				<Text style={styles.text}>
-					Balance
-				</Text>
-				<Text style={styles.title}>
-					{Helper.numberWithSeparator(data.summary_data.balance)}
-				</Text>
-			</View>
-			<View style={[styles.row, styles.space]}>
-				<Text style={styles.text}>
-					Biggest Debit
-				</Text>
-				<Text style={styles.title}>
-					{Helper.numberWithSeparator(data.summary_data.debit)}
-				</Text>
-			</View>
-			<View style={[styles.row, styles.space]}>
-				<Text style={styles.text}>
-					Biggest Credit
-				</Text>
-				<Text style={styles.title}>
-					{Helper.numberWithSeparator(data.summary_data.credit)}
-				</Text>
-			</View>
+			{refresh && (
+				<ActivityIndicator
+					animating={true}
+					size={'large'}
+					color={Colors.PRIMARY}
+					style={{marginTop: Mixins.scaleSize(10)}}
+				/>
+			)}
+
+			{!refresh && (
+				<>
+					<View style={[styles.row, styles.space]}>
+						<Text style={styles.text}>
+							Balance
+						</Text>
+						<Text style={styles.title}>
+							{Helper.numberWithSeparator(data.summary_data.balance)}
+						</Text>
+					</View>
+					<View style={[styles.row, styles.space]}>
+						<Text style={styles.text}>
+							Biggest Debit
+						</Text>
+						<Text style={styles.title}>
+							{Helper.numberWithSeparator(data.summary_data.debit)}
+						</Text>
+					</View>
+					<View style={[styles.row, styles.space]}>
+						<Text style={styles.text}>
+							Biggest Credit
+						</Text>
+						<Text style={styles.title}>
+							{Helper.numberWithSeparator(data.summary_data.credit)}
+						</Text>
+					</View>
+				</>
+			)}
 		</Card>
   );
 };

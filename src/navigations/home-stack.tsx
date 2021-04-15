@@ -14,6 +14,8 @@ import Category from '@screen/Category';
 import Transactions from '@screen/Transactions';
 import TransactionForm from '@screen/TransactionForm';
 import Profile from '@screen/Profile';
+import EditProfile from '@screen/EditProfile';
+import ChangePassword from '@screen/ChangePassword';
 
 const Stack = createStackNavigator();
 
@@ -88,6 +90,22 @@ function App() {
           component={Profile}
           options={{
             headerTitle: 'Profile',
+          }}
+        />
+
+				<Stack.Screen
+          name={'EditProfile'}
+          component={EditProfile}
+          options={{
+            headerTitle: 'Edit Profile',
+          }}
+        />
+
+				<Stack.Screen
+          name={'ChangePassword'}
+          component={ChangePassword}
+          options={{
+            headerTitle: 'Change Password',
           }}
         />
 

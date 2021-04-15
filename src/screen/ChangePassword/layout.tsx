@@ -1,5 +1,5 @@
 import React from 'react';
-import {View, StyleSheet, Text, TouchableOpacity} from 'react-native';
+import {View, StyleSheet} from 'react-native';
 import {useForm} from 'react-hook-form';
 import {showMessage} from 'react-native-flash-message';
 
@@ -19,24 +19,6 @@ const Layout: React.FC<Props> = (props) => {
 	const [secure, setSecure] = React.useState(true);
 	const [secureConf, setSecureConf] = React.useState(true);
 
-	React.useLayoutEffect(() => {
-    navigation.setOptions({
-      headerRight: () => {
-				return (
-					<TouchableOpacity
-						onPress={() => navigation.navigate('SignIn')}
-					>
-						<Text style={styles.rightAct}>
-							Sign In
-						</Text>
-					</TouchableOpacity>
-				);
-      },
-    });
-
-    return () => {};
-  }, [navigation]);
-
 	const {
 		register,
 		handleSubmit,
@@ -45,8 +27,6 @@ const Layout: React.FC<Props> = (props) => {
 	} = useForm();
 
 	React.useEffect(() => {
-    register('name', {required: 'This field is required'});
-		register('email', {required: 'This field is required'});
     register('password', {required: 'This field is required'});
     register('confirmPswd', {required: 'This field is required'});
 
@@ -65,25 +45,17 @@ const Layout: React.FC<Props> = (props) => {
 				type: 'danger',
 			});
 		} else {
-			firebase.auth()
-				.createUserWithEmailAndPassword(val.email, val.password)
-				.then((success) => {
-					let data = {
-						uid: success.user?.uid,
-						name: val.name,
-						email: val.email,
-					};
+			let user = firebase.auth().currentUser;
 
-					firebase.database()
-						.ref(`users/${data.uid}/`)
-						.set(data);
-
+			if (user) {
+				user.updatePassword(val.password)
+				.then(() => {
 					showMessage({
-						message: 'User successfully registered.',
+						message: 'Password changed successfully.',
 						type: 'success',
 					});
 
-					navigation.navigate('SignIn');
+					navigation.replace('Home');
 				})
 				.catch((error) => {
 					showMessage({
@@ -91,6 +63,7 @@ const Layout: React.FC<Props> = (props) => {
 						type: 'danger',
 					});
 				});
+			}
 		}
   };
 
@@ -99,26 +72,8 @@ const Layout: React.FC<Props> = (props) => {
 			<View style={styles.inputWrapper}>
 				<Input
 					mode={'outlined'}
-					name={'Full Name'}
-					placeholder={'e.g. Peter Parker'}
-					onChangeText={(text: any) => {
-						setValue('name', text, {shouldValidate: true});
-					}}
-					error={errors.name}
-				/>
-				<Input
-					mode={'outlined'}
-					name={'Email Address'}
-					placeholder={'e.g. youremail@happymoney.com'}
-					onChangeText={(text: any) => {
-						setValue('email', text, {shouldValidate: true});
-					}}
-					error={errors.email}
-				/>
-				<Input
-					mode={'outlined'}
 					name={'Password'}
-					placeholder={'Type your password'}
+					placeholder={'Type your new password'}
 					password={true}
 					secureTextEntry={secure}
 					onSecure={() => setSecure(!secure)}
@@ -130,7 +85,7 @@ const Layout: React.FC<Props> = (props) => {
 				<Input
 					mode={'outlined'}
 					name={'Confirm Password'}
-					placeholder={'Type again your password'}
+					placeholder={'Type again your new password'}
 					password={true}
 					secureTextEntry={secureConf}
 					onSecure={() => setSecureConf(!secureConf)}
@@ -146,7 +101,7 @@ const Layout: React.FC<Props> = (props) => {
 				mode={'contained'}
 				onPress={() => handleSubmit(onSubmit)()}
 			>
-				Sign Up
+				Change Password
 			</Button>
     </View>
   );

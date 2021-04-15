@@ -1,12 +1,13 @@
-import React from 'react';
+import React, {useContext} from 'react';
 import {View} from 'react-native';
 
-import container from '@components/container';
+import {useIsFocused} from '@react-navigation/native';
+import container, {ContainerContext} from '@components/container';
+import firebase from '@database/firebase';
 
 import HomeHeader from './home-header';
 import CardSummary from './card-summary';
-import CardCategory from './card-category';
-import CardTransactions from './card-transactions';
+import CardMenu from './card-menu';
 
 type Props = {
   navigation: any;
@@ -15,10 +16,48 @@ type Props = {
 const Layout: React.FC<Props> = (props) => {
   const {navigation} = props;
 
+	const ctx = useContext(ContainerContext);
+
+	const isFocused = useIsFocused();
+
+	const [refresh, setRefresh] = React.useState(false);
+	const [user, setUser] = React.useState({}) as any;
+
+	React.useLayoutEffect(() => {
+    ctx.setRefreshCallback({
+      func: async () => {
+        getUserData();
+      },
+    });
+
+    return () => {};
+  }, [navigation]); // eslint-disable-line react-hooks/exhaustive-deps
+
+	React.useEffect(() => {
+		if (isFocused) {
+			getUserData();
+		}
+
+		return () => {};
+	}, [navigation, isFocused]);
+
+	const getUserData = () => {
+		setRefresh(true);
+
+		const user = firebase.auth().currentUser;
+
+		firebase.database()
+			.ref(`users/${user?.uid}/`)
+			.once('value')
+			.then(resDB => {
+				if (resDB.val()) {
+					setUser(resDB.val());
+				}
+			})
+			.finally(() => setRefresh(false));
+  };
+
 	const dummyData = {
-		user_data: {
-			name: 'Muhammad Fariz Rahman',
-		},
 		summary_data: {
 			date: new Date(),
 			balance: 5760000,
@@ -27,20 +66,22 @@ const Layout: React.FC<Props> = (props) => {
 		}
 	}
 
-	React.useEffect(() => {
-
-    return () => {};
-  }, [navigation]);
-
   return (
     <View>
-			<HomeHeader data={dummyData} navigation={navigation} />
+			<HomeHeader
+				user={user}
+				navigation={navigation}
+			/>
 
-      <CardSummary data={dummyData} />
+			<CardSummary
+				data={dummyData}
+				refresh={refresh}
+			/>
 
-      <CardCategory navigation={navigation} />
-
-			<CardTransactions navigation={navigation} />
+			<CardMenu
+				user={user}
+				navigation={navigation}
+			/>
     </View>
   );
 };
