@@ -1,29 +1,40 @@
-import React from 'react';
+import React, {useContext} from 'react';
 import {
 	View,
 	StyleSheet,
 	Text,
 	TouchableOpacity,
 } from 'react-native';
-import {Chip} from 'react-native-paper';
+import {Chip, ActivityIndicator} from 'react-native-paper';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
+import {useForm} from 'react-hook-form';
+import {showMessage} from 'react-native-flash-message';
 
-import container from '@components/container';
+import {useIsFocused} from '@react-navigation/native';
+import container, {ContainerContext} from '@components/container';
 import Modal from '@components/modal';
 import Input from '@components/input';
 import Button from '@components/button';
 import {Colors, Mixins} from '@utils/index';
+import firebase from '@database/firebase';
 
 type Props = {
   navigation: any;
+	route: any;
 };
 
 const Layout: React.FC<Props> = (props) => {
-  const {navigation} = props;
+  const {navigation, route} = props;
 
+	const user = route.params;
+
+	const isFocused = useIsFocused();
+
+	const [dataCategory, setDataCategory] = React.useState([] as any);
+
+	const [refresh, setRefresh] = React.useState(false);
 	const [preview, setPreview] = React.useState(false);
 	const [modalDelete, setModalDelete] = React.useState(false);
-	const [category, setCategory] = React.useState('');
 	const [detail, setDetail] = React.useState({}) as any;
 
 	React.useLayoutEffect(() => {
@@ -46,59 +57,143 @@ const Layout: React.FC<Props> = (props) => {
     return () => {};
   }, [navigation]);
 
-	React.useEffect(() => {
+	const ctx = useContext(ContainerContext);
+
+	React.useLayoutEffect(() => {
+    ctx.setRefreshCallback({
+      func: async () => {
+        getCategory();
+      },
+    });
 
     return () => {};
-  }, [navigation]);
+  }, [navigation]); // eslint-disable-line react-hooks/exhaustive-deps
 
-	const dummyData = [
-		{
-			category: 'Salary',
-			created_on: new Date(),
-		},
-		{
-			category: 'Boarding House',
-			created_on: new Date(),
-		},
-		{
-			category: 'College',
-			created_on: new Date(),
-		},
-	];
+	React.useEffect(() => {
+		if (isFocused) {
+			getCategory();
+		}
+
+		return () => {};
+	}, [isFocused]);
+
+	const getCategory = () => {
+		setRefresh(true);
+		setDataCategory([]);
+		setDetail({});
+
+		firebase.database()
+			.ref(`category/${user.uid}/`)
+			.once('value', (res) => {
+				if (res.val()) {
+					const dataRes = res.val();
+					const allData = [] as any;
+
+					Object.keys(dataRes).map((key) => {
+            allData.push({
+              id: key,
+              category: dataRes[key],
+            });
+          });
+
+					setDataCategory(allData);
+				}
+			})
+			.then(() => setRefresh(false));
+	};
+
+	const {
+		register,
+		handleSubmit,
+		setValue,
+		formState: {errors},
+	} = useForm();
+
+	React.useEffect(() => {
+    register('category', {required: 'This field is required'});
+
+    return () => {};
+  }, [register]);
+
+	const onSubmit = (val: any) => {
+    firebase.database()
+			.ref(`category/${user.uid}/`)
+			.push(val.category)
+			.then(() => {
+				setPreview(false);
+				getCategory();
+			})
+			.catch((error) => {
+				setPreview(false);
+				showMessage({
+					message: error.message,
+					type: 'danger',
+				});
+			});
+  };
+
+	const onDelete = () => {
+		firebase.database()
+			.ref(`category/${user.uid}/${detail.id}/`)
+			.remove()
+			.then(() => {
+				setModalDelete(false);
+				getCategory();
+			})
+			.catch((error) => {
+				showMessage({
+					message: error.message,
+					type: 'danger',
+				});
+				setModalDelete(false);
+			})
+	};
 
 	const sorting = () => {
-		return dummyData.sort((a, b) => {
+		return dataCategory.sort((a: any, b: any) => {
 			return a.category < b.category ? -1 : 1;
 		});
 	};
 
   return (
 		<View style={styles.container}>
-			<View style={[styles.row, styles.chipContainer]}>
-				{dummyData.length != 0 && (
-					<>
-						{sorting().map((item: any, i: number) => (
-							<Chip
-								style={styles.chipStyle}
-								textStyle={styles.chipText}
-								onClose={() => {
-									setModalDelete(true)
-									setDetail({
-										category: item.category,
-									});
-								}}
-								key={i}
-							>
-								{item.category}
-							</Chip>
-						))}
-					</>
-				) || (
-					<Text style={styles.textEmpty}>
-						No category available
-					</Text>
-				)}
-			</View>
+			{refresh && (
+				<ActivityIndicator
+					animating={true}
+					size={'large'}
+					color={Colors.PRIMARY}
+					style={{marginTop: Mixins.scaleSize(10)}}
+				/>
+			)}
+
+			{!refresh && (
+				<View style={[styles.row, styles.chipContainer]}>
+					{dataCategory.length == 0 && (
+						<Text style={styles.textEmpty}>
+							No category available
+						</Text>
+					) || (
+						<>
+							{sorting().map((item: any, i: number) => (
+								<Chip
+									style={styles.chipStyle}
+									textStyle={styles.chipText}
+									onClose={() => {
+										setModalDelete(true)
+										setDetail({
+											id: item.id,
+											category: item.category,
+										});
+									}}
+									key={i}
+								>
+									{item.category}
+								</Chip>
+							))}
+						</>
+					)}
+				</View>
+			)}
 
 			<Modal
 				show={preview}
@@ -117,16 +212,17 @@ const Layout: React.FC<Props> = (props) => {
 						mode={'outlined'}
 						name={'Category Name'}
 						placeholder={'e.g. Holiday'}
-						value={category}
-						onChangeText={text => setCategory(text)}
+						onChangeText={text => {
+							setValue('category', text, {shouldValidate: true});
+						}}
+						error={errors.category}
 					/>
 					<View style={styles.action}>
 						<Button
 							uppercase={false}
 							mode={'contained'}
 							onPress={() => {
-								console.warn('saved');
-								setPreview(false);
+								handleSubmit(onSubmit)();
 							}}
 						>
 							Save
@@ -151,7 +247,7 @@ const Layout: React.FC<Props> = (props) => {
 					<Text style={styles.text}>
 						Are you sure delete{' '}
 						<Text style={{fontWeight: 'bold'}}>
-							{detail?.category}
+							{detail.category}
 						</Text>
 						?
 					</Text>
@@ -164,9 +260,7 @@ const Layout: React.FC<Props> = (props) => {
 							style={{
 								width: '47%',
 							}}
-							onPress={() => {
-								setModalDelete(false);
-							}}
+							onPress={() => setModalDelete(false)}
 						>
 							Cancel
 						</Button>
@@ -176,10 +270,7 @@ const Layout: React.FC<Props> = (props) => {
 							style={{
 								width: '47%',
 							}}
-							onPress={() => {
-								console.warn('deleted');
-								setModalDelete(false);
-							}}
+							onPress={() => onDelete()}
 						>
 							Delete
 						</Button>

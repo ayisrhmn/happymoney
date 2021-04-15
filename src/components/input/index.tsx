@@ -17,6 +17,7 @@ interface Props {
   name?: any;
 	focus?: any;
 	setFocus?: any;
+	disabled?: boolean;
   placeholder?: any;
   value?: any;
 	error?: any;

@@ -1,10 +1,13 @@
 import React from 'react';
 import {View, StyleSheet, Text, TouchableOpacity} from 'react-native';
+import {useForm} from 'react-hook-form';
+import {showMessage} from 'react-native-flash-message';
 
 import container from '@components/container';
 import Input from '@components/input';
 import Button from '@components/button';
 import {Colors, Mixins} from '@utils/index';
+import firebase from '@database/firebase';
 
 type Props = {
   navigation: any;
@@ -12,8 +15,6 @@ type Props = {
 
 const Layout: React.FC<Props> = (props) => {
   const {navigation} = props;
-	const [email, setEmail] = React.useState('');
-	const [password, setPassword] = React.useState('');
 	const [secure, setSecure] = React.useState(true);
 
 	React.useLayoutEffect(() => {
@@ -34,6 +35,34 @@ const Layout: React.FC<Props> = (props) => {
     return () => {};
   }, [navigation]);
 
+	const {
+		register,
+		handleSubmit,
+		setValue,
+		formState: {errors},
+	} = useForm();
+
+	React.useEffect(() => {
+		register('email', {required: 'This field is required'});
+    register('password', {required: 'This field is required'});
+
+    return () => {};
+  }, [register]);
+
+	const onSubmit = (val: any) => {
+		firebase.auth()
+			.signInWithEmailAndPassword(val.email, val.password)
+			.then(() => {
+				navigation.replace('Home');
+			})
+			.catch((error) => {
+				showMessage({
+					message: error.message,
+					type: 'danger',
+				});
+			});
+  };
+
   return (
     <View style={styles.container}>
 			<View style={styles.inputWrapper}>
@@ -41,25 +70,29 @@ const Layout: React.FC<Props> = (props) => {
 					mode={'outlined'}
 					name={'Email Address'}
 					placeholder={'e.g. youremail@happymoney.com'}
-					value={email}
-					onChangeText={text => setEmail(text)}
+					onChangeText={(text: any) => {
+						setValue('email', text, {shouldValidate: true});
+					}}
+					error={errors.email}
 				/>
 				<Input
 					mode={'outlined'}
 					name={'Password'}
 					placeholder={'Type your password'}
-					value={password}
 					password={true}
 					secureTextEntry={secure}
 					onSecure={() => setSecure(!secure)}
-					onChangeText={text => setPassword(text)}
+					onChangeText={(text: any) => {
+						setValue('password', text, {shouldValidate: true});
+					}}
+					error={errors.password}
 				/>
 			</View>
 
 			<Button
 				uppercase={false}
 				mode={'contained'}
-				onPress={() => navigation.replace('Home')}
+				onPress={() => handleSubmit(onSubmit)()}
 			>
 				Sign In
 			</Button>
