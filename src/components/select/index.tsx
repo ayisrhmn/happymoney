@@ -105,6 +105,7 @@ const Select = (props: LayoutProps) => {
 				select={true}
         placeholder={placeholder ? placeholder : ''}
         value={displayValue}
+				error={props?.error}
         onPress={() => {
           setIsModalVisible(true);
 
@@ -113,17 +114,6 @@ const Select = (props: LayoutProps) => {
           }
         }}
       />
-
-      {props?.error && (
-        <Text
-          style={{
-            fontSize: Mixins.scaleFont(12),
-            paddingTop: Mixins.scaleSize(3),
-            color: Colors.ALERT,
-          }}>
-          {props.error.message}
-        </Text>
-      )}
 
       <Modal
         show={isModalVisible}

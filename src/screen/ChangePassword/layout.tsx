@@ -11,10 +11,13 @@ import firebase from '@database/firebase';
 
 type Props = {
   navigation: any;
+	route: any;
 };
 
 const Layout: React.FC<Props> = (props) => {
-  const {navigation} = props;
+  const {navigation, route} = props;
+
+	const user = route.params;
 
 	const [secure, setSecure] = React.useState(true);
 	const [secureConf, setSecureConf] = React.useState(true);
@@ -45,17 +48,17 @@ const Layout: React.FC<Props> = (props) => {
 				type: 'danger',
 			});
 		} else {
-			let user = firebase.auth().currentUser;
+			let currUser = firebase.auth().currentUser;
 
-			if (user) {
-				user.updatePassword(val.password)
+			if (currUser) {
+				currUser.updatePassword(val.password)
 				.then(() => {
 					showMessage({
 						message: 'Password changed successfully.',
 						type: 'success',
 					});
 
-					navigation.replace('Home');
+					navigation.replace('Profile', user);
 				})
 				.catch((error) => {
 					showMessage({

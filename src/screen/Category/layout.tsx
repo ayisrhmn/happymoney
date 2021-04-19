@@ -67,7 +67,7 @@ const Layout: React.FC<Props> = (props) => {
     });
 
     return () => {};
-  }, [navigation]); // eslint-disable-line react-hooks/exhaustive-deps
+  }, [navigation]);
 
 	React.useEffect(() => {
 		if (isFocused) {
@@ -83,7 +83,7 @@ const Layout: React.FC<Props> = (props) => {
 		setDetail({});
 
 		firebase.database()
-			.ref(`category/${user.uid}/`)
+			.ref(`category/${user?.uid}/`)
 			.once('value', (res) => {
 				if (res.val()) {
 					const dataRes = res.val();
@@ -117,7 +117,7 @@ const Layout: React.FC<Props> = (props) => {
 
 	const onSubmit = (val: any) => {
     firebase.database()
-			.ref(`category/${user.uid}/`)
+			.ref(`category/${user?.uid}/`)
 			.push(val.category)
 			.then(() => {
 				setPreview(false);
@@ -134,7 +134,7 @@ const Layout: React.FC<Props> = (props) => {
 
 	const onDelete = () => {
 		firebase.database()
-			.ref(`category/${user.uid}/${detail.id}/`)
+			.ref(`category/${user?.uid}/${detail?.id}/`)
 			.remove()
 			.then(() => {
 				setModalDelete(false);

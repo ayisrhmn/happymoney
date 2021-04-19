@@ -43,7 +43,13 @@ const Header: React.FC<Props> = ({navigation, scene}) => {
     <Appbar.Header style={styles.headerContainer}>
       {['SignIn', 'SignUp', 'Home'].indexOf(scene.route.name) < 0 && (
         <Appbar.BackAction
-					onPress={() => navigation.goBack()}
+					onPress={() => {
+						if (['Profile', 'Transactions'].indexOf(scene.route.name) < 0) {
+							navigation.goBack();
+						} else {
+							navigation.navigate('Home');
+						}
+					}}
 					color={Colors.WHITE}
 				/>
       )}
