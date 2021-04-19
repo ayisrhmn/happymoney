@@ -19,24 +19,6 @@ const Layout: React.FC<Props> = (props) => {
 	const [secure, setSecure] = React.useState(true);
 	const [secureConf, setSecureConf] = React.useState(true);
 
-	React.useLayoutEffect(() => {
-    navigation.setOptions({
-      headerRight: () => {
-				return (
-					<TouchableOpacity
-						onPress={() => navigation.navigate('SignIn')}
-					>
-						<Text style={styles.rightAct}>
-							Sign In
-						</Text>
-					</TouchableOpacity>
-				);
-      },
-    });
-
-    return () => {};
-  }, [navigation]);
-
 	const {
 		register,
 		handleSubmit,
@@ -77,20 +59,14 @@ const Layout: React.FC<Props> = (props) => {
 					firebase.database()
 						.ref(`users/${data.uid}/`)
 						.set(data);
-
-					showMessage({
-						message: 'User successfully registered.',
-						type: 'success',
-					});
-
-					navigation.navigate('SignIn');
 				})
 				.catch((error) => {
 					showMessage({
 						message: error.message,
 						type: 'danger',
 					});
-				});
+				})
+				.finally(() => navigation.replace('Home'));
 		}
   };
 
@@ -148,6 +124,17 @@ const Layout: React.FC<Props> = (props) => {
 			>
 				Sign Up
 			</Button>
+
+			<View style={styles.wrapperSignIn}>
+				<Text style={styles.labelSignIn}>
+					Already have an account?{' '}
+				</Text>
+				<TouchableOpacity onPress={() => navigation.navigate('SignIn')}>
+					<Text style={styles.labelSignInTouch}>
+						Sign In
+					</Text>
+				</TouchableOpacity>
+			</View>
     </View>
   );
 };
@@ -159,10 +146,20 @@ const styles = StyleSheet.create({
 	inputWrapper: {
 		marginBottom: Mixins.scaleSize(30),
 	},
-	rightAct: {
-		color: Colors.SECONDARY,
-		fontSize: Mixins.scaleFont(16),
-		marginRight: Mixins.scaleSize(10),
+	wrapperSignIn: {
+		flexDirection: 'row',
+		justifyContent: 'center',
+		alignItems: 'center',
+		marginVertical: Mixins.scaleSize(26)
+	},
+	labelSignIn: {
+		fontSize: Mixins.scaleFont(14),
+		color: Colors.SHADES.dark[60],
+	},
+	labelSignInTouch: {
+		fontSize: Mixins.scaleFont(14),
+		fontWeight: 'bold',
+		color: Colors.PRIMARY,
 	},
 });
 

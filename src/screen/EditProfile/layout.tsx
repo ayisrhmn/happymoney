@@ -11,33 +11,15 @@ import firebase from '@database/firebase';
 
 type Props = {
   navigation: any;
+	route: any;
 };
 
 const Layout: React.FC<Props> = (props) => {
-  const {navigation} = props;
+  const {navigation, route} = props;
 
-	const [profile, setProfile] = React.useState({}) as any;
-	const [currName, setCurrName] = React.useState({}) as any;
+	const user = route.params;
 
-	React.useEffect(() => {
-		getUserData();
-
-		return () => {};
-	}, []);
-
-	const getUserData = () => {
-		const user = firebase.auth().currentUser;
-
-		firebase.database()
-			.ref(`users/${user?.uid}/`)
-			.once('value')
-			.then(resDB => {
-				if (resDB.val()) {
-					setProfile(resDB.val());
-					setCurrName(resDB.val());
-				}
-			});
-  };
+	const [profile, setProfile] = React.useState(user) as any;
 
 	const {
 		handleSubmit,
@@ -53,14 +35,14 @@ const Layout: React.FC<Props> = (props) => {
     let data = profile;
 
 		firebase.database()
-      .ref(`users/${profile.uid}/`)
+      .ref(`users/${profile?.uid}/`)
       .update(data)
       .then(() => {
 				showMessage({
 					message: 'Profile successfully updated.',
 					type: 'success',
 				});
-				navigation.replace('Home');
+				navigation.replace('Profile', profile);
       })
       .catch((error) => {
 				showMessage({
@@ -91,11 +73,11 @@ const Layout: React.FC<Props> = (props) => {
 					name={'name'}
 					rules={{
 						required:
-							profile.name === currName.name
+							profile?.name === user?.name
 								? false
 								: errorMessage.form
 					}}
-					defaultValue={profile.name}
+					defaultValue={profile?.name}
 				/>
 				<Input
 					mode={'outlined'}

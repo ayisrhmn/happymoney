@@ -1,5 +1,5 @@
 import React from 'react';
-import {View, StyleSheet, Text} from 'react-native';
+import {View, StyleSheet, Text, BackHandler} from 'react-native';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import {showMessage} from 'react-native-flash-message';
 
@@ -19,8 +19,18 @@ const Layout: React.FC<Props> = (props) => {
 	const user = route.params;
 
 	React.useEffect(() => {
+		const backAction = () => {
+      navigation.navigate('Home');
 
-    return () => {};
+      return true;
+    };
+
+    const backHandler = BackHandler.addEventListener(
+      'hardwareBackPress',
+      backAction
+    );
+
+    return () => backHandler.remove();
   }, [navigation]);
 
 	const signOut = () => {
@@ -82,7 +92,7 @@ const Layout: React.FC<Props> = (props) => {
 					onPress={() => {
 						item.navigate === 'signout'
 							? signOut()
-							: navigation.navigate(item.navigate)
+							: navigation.navigate(item.navigate, user)
 					}}
 					key={i}
 				>

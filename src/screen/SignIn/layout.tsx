@@ -17,24 +17,6 @@ const Layout: React.FC<Props> = (props) => {
   const {navigation} = props;
 	const [secure, setSecure] = React.useState(true);
 
-	React.useLayoutEffect(() => {
-    navigation.setOptions({
-      headerRight: () => {
-				return (
-					<TouchableOpacity
-						onPress={() => navigation.navigate('SignUp')}
-					>
-						<Text style={styles.rightAct}>
-							Sign Up
-						</Text>
-					</TouchableOpacity>
-				);
-      },
-    });
-
-    return () => {};
-  }, [navigation]);
-
 	const {
 		register,
 		handleSubmit,
@@ -96,6 +78,17 @@ const Layout: React.FC<Props> = (props) => {
 			>
 				Sign In
 			</Button>
+
+			<View style={styles.wrapperSignUp}>
+				<Text style={styles.labelSignUp}>
+					Don't have an account?{' '}
+				</Text>
+				<TouchableOpacity onPress={() => navigation.navigate('SignUp')}>
+					<Text style={styles.labelSignUpTouch}>
+						Sign Up
+					</Text>
+				</TouchableOpacity>
+			</View>
     </View>
   );
 };
@@ -107,10 +100,20 @@ const styles = StyleSheet.create({
 	inputWrapper: {
 		marginBottom: Mixins.scaleSize(30),
 	},
-	rightAct: {
-		color: Colors.SECONDARY,
-		fontSize: Mixins.scaleFont(16),
-		marginRight: Mixins.scaleSize(10),
+	wrapperSignUp: {
+		flexDirection: 'row',
+		justifyContent: 'center',
+		alignItems: 'center',
+		marginVertical: Mixins.scaleSize(26)
+	},
+	labelSignUp: {
+		fontSize: Mixins.scaleFont(14),
+		color: Colors.SHADES.dark[60],
+	},
+	labelSignUpTouch: {
+		fontSize: Mixins.scaleFont(14),
+		fontWeight: 'bold',
+		color: Colors.PRIMARY,
 	},
 });
 

@@ -16,12 +16,14 @@ type Props = {
 const Layout: React.FC<Props> = (props) => {
   const {navigation} = props;
 
-	const ctx = useContext(ContainerContext);
+	const user = firebase.auth().currentUser;
 
 	const isFocused = useIsFocused();
 
 	const [refresh, setRefresh] = React.useState(false);
-	const [user, setUser] = React.useState({}) as any;
+	const [dataUser, setDataUser] = React.useState({}) as any;
+
+	const ctx = useContext(ContainerContext);
 
 	React.useLayoutEffect(() => {
     ctx.setRefreshCallback({
@@ -44,14 +46,12 @@ const Layout: React.FC<Props> = (props) => {
 	const getUserData = () => {
 		setRefresh(true);
 
-		const user = firebase.auth().currentUser;
-
 		firebase.database()
 			.ref(`users/${user?.uid}/`)
 			.once('value')
 			.then(resDB => {
 				if (resDB.val()) {
-					setUser(resDB.val());
+					setDataUser(resDB.val());
 				}
 			})
 			.finally(() => setRefresh(false));
@@ -69,7 +69,7 @@ const Layout: React.FC<Props> = (props) => {
   return (
     <View>
 			<HomeHeader
-				user={user}
+				user={dataUser}
 				navigation={navigation}
 			/>
 
@@ -79,7 +79,7 @@ const Layout: React.FC<Props> = (props) => {
 			/>
 
 			<CardMenu
-				user={user}
+				user={dataUser}
 				navigation={navigation}
 			/>
     </View>

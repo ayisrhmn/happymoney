@@ -5,24 +5,35 @@ import {
 	Text,
 	TouchableOpacity,
 	ScrollView,
+	RefreshControl,
 } from 'react-native';
-import {TextInput} from 'react-native-paper';
+import {TextInput, ActivityIndicator} from 'react-native-paper';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 import DatePicker from 'react-native-modern-datepicker';
 
+import {useIsFocused} from '@react-navigation/native';
 import container from '@components/container';
 import Modal from '@components/modal';
 import Card from '@components/card';
 import {Colors, Helper, Mixins} from '@utils/index';
+import firebase from '@database/firebase';
 
 import moment from 'moment';
 
 type Props = {
   navigation: any;
+	route: any;
 };
 
 const Layout: React.FC<Props> = (props) => {
-  const {navigation} = props;
+  const {navigation, route} = props;
+
+	const user = route.params;
+
+	const isFocused = useIsFocused();
+
+	const [refresh, setRefresh] = React.useState(false);
+	const [data, setData] = React.useState([]) as any;
 
 	const [filter, setFilter] = React.useState('All');
 	const [date, setDate] = React.useState(new Date());
@@ -37,7 +48,7 @@ const Layout: React.FC<Props> = (props) => {
       headerRight: () => {
 				return (
 					<TouchableOpacity
-						onPress={() => navigation.navigate('TransactionForm')}
+						onPress={() => navigation.navigate('TransactionForm', user)}
 					>
 						<MaterialIcons
 							name={'add'}
@@ -53,12 +64,39 @@ const Layout: React.FC<Props> = (props) => {
   }, [navigation]);
 
 	React.useEffect(() => {
-		setDate(date);
-		setDisplayDate(moment(date).format('MMMM YYYY'));
-		setSelectedMonth(moment(date).format('YYYY/MM'));
+		if (isFocused) {
+			setDate(date);
+			setDisplayDate(moment(date).format('MMMM YYYY'));
+			setSelectedMonth(moment(date).format('YYYY/MM'));
+			getData();
+		}
 
     return () => {};
-  }, [navigation]);
+  }, [navigation, isFocused]);
+
+	const getData = () => {
+		setRefresh(true);
+		setData([]);
+
+		firebase.database()
+			.ref(`transactions/${user?.uid}/`)
+			.once('value', (res) => {
+				if (res.val()) {
+					const dataRes = res.val();
+					const allData = [] as any;
+
+					Object.keys(dataRes).map((key) => {
+            allData.push({
+              id: key,
+              transaction: dataRes[key],
+            });
+          });
+
+					setData(allData);
+				}
+			})
+			.then(() => setRefresh(false));
+	};
 
 	const handleConfirm = (date: any) => {
     setSelectedMonth(date.replace(' ', '/'));
@@ -69,31 +107,25 @@ const Layout: React.FC<Props> = (props) => {
     setDisplayDate(displayDateFormat);
     setDate(DateString2Date);
     setDatePickerShow(false);
+		getData();
   };
 
-	const dummyData = [
-		{
-			title: 'Monthly salary',
-			category: 'Salary',
-			type: 'Debit',
-			value: 6000000,
-			created_on: new Date(),
-		},
-		{
-			title: 'Pay boarding',
-			category: 'Boarding House',
-			type: 'Credit',
-			value: 650000,
-			created_on: new Date(),
-		},
-		{
-			title: 'Pay college fees',
-			category: 'College',
-			type: 'Credit',
-			value: 1300000,
-			created_on: new Date(),
-		},
-	];
+	const filterData = () => {
+		return data?.filter((item: any) => {
+			const filterBy = {
+				date: moment(item.transaction.date).format('MMMM YYYY') === displayDate,
+				type: filter !== 'All'
+					? item.transaction.type === filter
+					: item.transaction.type,
+			};
+
+			if (filterBy.date && filterBy.type) {
+				return true;
+			}
+
+			return;
+		});
+	};
 
   return (
 		<View style={styles.container}>
@@ -185,71 +217,91 @@ const Layout: React.FC<Props> = (props) => {
 				</TouchableOpacity>
 			</View>
 
-			<ScrollView>
-				{dummyData
-					.filter((data: any) =>
-						filter === 'All'
-						? data.type
-						: data.type === filter
-					)
-					.map((data: any, i: number) => (
-					<Card
-						style={[
-							styles.row,
-							styles.cardContainer,
-							{justifyContent: 'space-between'},
-						]}
-						key={i}
-						onPress={() => console.warn(data.title)}
-					>
-						<View>
-							<Text style={styles.cardTitle}>
-								{data.title}
-							</Text>
+			{refresh && (
+				<ActivityIndicator
+					animating={true}
+					size={'large'}
+					color={Colors.PRIMARY}
+					style={{marginTop: Mixins.scaleSize(10)}}
+				/>
+			)}
 
-							<View style={styles.row}>
-								<MaterialIcons
-									name={'category'}
-									size={Mixins.scaleFont(18)}
-									color={Colors.SHADES.dark[50]}
-								/>
-								<Text style={styles.cardText}>
-									{data.category}
-								</Text>
-							</View>
-
-							<View style={styles.row}>
-								<MaterialIcons
-									name={'access-time'}
-									size={Mixins.scaleFont(18)}
-									color={Colors.SHADES.dark[50]}
-								/>
-								<Text style={styles.cardText}>
-									{moment(data.created_on).format('DD-MMM-YYYY')}
-								</Text>
-							</View>
-						</View>
-
-						<Text style={
-							data.type === 'Debit'
-							? [styles.cardValue, styles.valueDebit]
-							: [styles.cardValue, styles.valueCredit]
-						}>
-							{Helper.numberWithSeparator(data.value)}
+			{!refresh && (
+				<>
+					{filterData().length === 0 && (
+						<Text style={styles.textEmpty}>
+							No transaction available
 						</Text>
+					) || (
+						<ScrollView
+							refreshControl={
+								<RefreshControl
+									refreshing={refresh}
+									onRefresh={getData}
+								/>
+							}
+						>
+							{filterData().map((item: any, i: number) => (
+								<Card
+									style={[
+										styles.row,
+										styles.cardContainer,
+										{justifyContent: 'space-between'},
+									]}
+									key={i}
+									onPress={() => console.log('press')}
+								>
+									<View>
+										<Text style={styles.cardTitle}>
+											{item.transaction.title}
+										</Text>
 
-						<View style={
-							data.type === 'Debit'
-							? [styles.statusBadge, styles.badgeDebit]
-							: [styles.statusBadge, styles.badgeCredit]
-						}>
-							<Text style={styles.statusText}>
-								{data.type}
-							</Text>
-						</View>
-					</Card>
-				))}
-			</ScrollView>
+										<View style={styles.row}>
+											<MaterialIcons
+												name={'category'}
+												size={Mixins.scaleFont(18)}
+												color={Colors.SHADES.dark[50]}
+											/>
+											<Text style={styles.cardText}>
+												{item.transaction.category}
+											</Text>
+										</View>
+
+										<View style={styles.row}>
+											<MaterialIcons
+												name={'access-time'}
+												size={Mixins.scaleFont(18)}
+												color={Colors.SHADES.dark[50]}
+											/>
+											<Text style={styles.cardText}>
+												{moment(item.transaction.date).format('DD-MMM-YYYY')}
+											</Text>
+										</View>
+									</View>
+
+									<Text style={
+										item.transaction.type === 'Debit'
+										? [styles.cardValue, styles.valueDebit]
+										: [styles.cardValue, styles.valueCredit]
+									}>
+										{Helper.numberWithSeparator(item.transaction.total)}
+									</Text>
+
+									<View style={
+										item.transaction.type === 'Debit'
+										? [styles.statusBadge, styles.badgeDebit]
+										: [styles.statusBadge, styles.badgeCredit]
+									}>
+										<Text style={styles.statusText}>
+											{item.transaction.type}
+										</Text>
+									</View>
+								</Card>
+							))}
+						</ScrollView>
+					)}
+				</>
+			)}
 		</View>
   );
 };
@@ -358,6 +410,12 @@ const styles = StyleSheet.create({
 		fontWeight: 'bold',
 		textAlign: 'center',
 		color: Colors.WHITE,
+	},
+	textEmpty: {
+		flex: 1,
+		textAlign: 'center',
+		fontSize: Mixins.scaleFont(18),
+		color: Colors.BLACK,
 	},
 });
 
