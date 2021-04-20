@@ -15,3 +15,4 @@ declare module 'react-native-vector-icons/EvilIcons';
 declare module 'lodash';
 declare module 'react-native-modern-datepicker';
 declare module 'react-native-text-input-mask';
+declare module 'react-native-restart';

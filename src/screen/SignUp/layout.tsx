@@ -6,7 +6,7 @@ import {showMessage} from 'react-native-flash-message';
 import container from '@components/container';
 import Input from '@components/input';
 import Button from '@components/button';
-import {Colors, Mixins} from '@utils/index';
+import {Colors, Mixins, Helper} from '@utils/index';
 import firebase from '@database/firebase';
 
 type Props = {
@@ -54,6 +54,7 @@ const Layout: React.FC<Props> = (props) => {
 						uid: success.user?.uid,
 						name: val.name,
 						email: val.email,
+						avatar_color: Helper.getRandomColor(),
 					};
 
 					firebase.database()

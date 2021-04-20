@@ -2,10 +2,12 @@ import React from 'react';
 import {View, StyleSheet, Text, BackHandler} from 'react-native';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import {showMessage} from 'react-native-flash-message';
+import RNRestart from 'react-native-restart';
 
 import container from '@components/container';
 import Card from '@components/card';
-import {Colors, Mixins} from '@utils/index';
+import Avatar from '@components/avatar';
+import {Colors, Mixins, Helper} from '@utils/index';
 import firebase from '@database/firebase';
 
 type Props = {
@@ -37,7 +39,7 @@ const Layout: React.FC<Props> = (props) => {
 		firebase.auth()
       .signOut()
       .then(() => {
-        navigation.replace('SignIn');
+        RNRestart.Restart();
       })
       .catch((error) => {
         showMessage({
@@ -71,10 +73,10 @@ const Layout: React.FC<Props> = (props) => {
   return (
     <>
 			<View style={styles.header}>
-				<Ionicons
-					name={'person-circle'}
+				<Avatar
 					size={Mixins.scaleFont(72)}
-					color={Colors.SECONDARY}
+					label={Helper.getInitialName(user.name)}
+					color={user.avatar_color}
 				/>
 				<View style={styles.infoWrapper}>
 					<Text style={styles.infoTitle}>
@@ -134,7 +136,7 @@ const styles = StyleSheet.create({
 		alignItems: 'center',
 	},
 	infoWrapper: {
-		marginTop: Mixins.scaleSize(5),
+		marginTop: Mixins.scaleSize(8),
 		marginBottom: Mixins.scaleSize(10),
 		justifyContent: 'center',
 		alignItems: 'center',

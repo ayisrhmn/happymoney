@@ -5,6 +5,8 @@ import {useIsFocused} from '@react-navigation/native';
 import container, {ContainerContext} from '@components/container';
 import firebase from '@database/firebase';
 
+import moment from 'moment';
+
 import HomeHeader from './home-header';
 import CardSummary from './card-summary';
 import CardMenu from './card-menu';
@@ -22,13 +24,14 @@ const Layout: React.FC<Props> = (props) => {
 
 	const [refresh, setRefresh] = React.useState(false);
 	const [dataUser, setDataUser] = React.useState({}) as any;
+	const [data, setData] = React.useState([]) as any;
 
 	const ctx = useContext(ContainerContext);
 
 	React.useLayoutEffect(() => {
     ctx.setRefreshCallback({
       func: async () => {
-        getUserData();
+        getData();
       },
     });
 
@@ -37,13 +40,13 @@ const Layout: React.FC<Props> = (props) => {
 
 	React.useEffect(() => {
 		if (isFocused) {
-			getUserData();
+			getData();
 		}
 
 		return () => {};
 	}, [navigation, isFocused]);
 
-	const getUserData = () => {
+	const getData = () => {
 		setRefresh(true);
 
 		firebase.database()
@@ -53,17 +56,59 @@ const Layout: React.FC<Props> = (props) => {
 				if (resDB.val()) {
 					setDataUser(resDB.val());
 				}
+			});
+
+			firebase.database()
+			.ref(`transactions/${user?.uid}/`)
+			.once('value', (res) => {
+				if (res.val()) {
+					const dataRes = res.val();
+					const allData = [] as any;
+
+					Object.keys(dataRes).map((key) => {
+            allData.push({
+              id: key,
+              total: dataRes[key].total,
+              type: dataRes[key].type,
+              date: dataRes[key].date,
+            });
+          });
+
+					setData(allData);
+				}
 			})
-			.finally(() => setRefresh(false));
+			.then(() => setRefresh(false));
   };
 
-	const dummyData = {
-		summary_data: {
-			date: new Date(),
-			balance: 5760000,
-			debit: 5760000,
-			credit: 500000,
-		}
+	const sumData = {
+		debit: data
+			.filter((v: any) => {
+				const filterBy = {
+					date: moment(v.date).format('MMMM YYYY') === moment().format('MMMM YYYY'),
+					type: v.type === 'Debit',
+				}
+
+				if (filterBy.date && filterBy.type) {
+					return true;
+				}
+
+				return;
+			})
+			.reduce((i: any, o: any) => o.total + i, 0),
+		credit: data
+			.filter((v: any) => {
+				const filterBy = {
+					date: moment(v.date).format('MMMM YYYY') === moment().format('MMMM YYYY'),
+					type: v.type === 'Credit',
+				}
+
+				if (filterBy.date && filterBy.type) {
+					return true;
+				}
+
+				return;
+			})
+			.reduce((i: any, o: any) => o.total + i, 0),
 	}
 
   return (
@@ -74,7 +119,7 @@ const Layout: React.FC<Props> = (props) => {
 			/>
 
 			<CardSummary
-				data={dummyData}
+				data={sumData}
 				refresh={refresh}
 			/>
 

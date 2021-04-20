@@ -204,7 +204,11 @@ const InputSelect: React.FC<Props> = (props) => {
 				right={
 					<TextInput.Icon
 						name={'chevron-down'}
-						color={Colors.BLACK}
+						color={
+							props?.disabled
+								? Colors.SHADES.dark[40]
+								: Colors.BLACK
+						}
 					/>
 				}
 			/>

@@ -44,6 +44,8 @@ const Layout: React.FC<Props> = (props) => {
   };
 
 	const getData = () => {
+		setModalDate(moment().format('DD-MMM-YYYY'));
+
 		firebase.database()
 			.ref(`category/${user?.uid}/`)
 			.once('value', (res) => {
@@ -58,8 +60,6 @@ const Layout: React.FC<Props> = (props) => {
 					setDataCategory(allData);
 				}
 			});
-
-		setModalDate(moment().format('DD-MMM-YYYY'));
 	};
 
 	const typeData = [
@@ -98,7 +98,7 @@ const Layout: React.FC<Props> = (props) => {
 			.push(data)
 			.then(() => {
 				showMessage({
-					message: 'Transactions has been successfully added.',
+					message: 'Transactions added successfully.',
 					type: 'success',
 				});
 				navigation.replace('Transactions', user);
@@ -116,7 +116,7 @@ const Layout: React.FC<Props> = (props) => {
 			<View style={styles.inputWrapper}>
 				<Input
 					mode={'outlined'}
-					name={'Title Transactions*'}
+					name={'Title Transactions'}
 					placeholder={'e.g. Saturday Night Date'}
 					onChangeText={text => {
 						setValue('title', text, {shouldValidate: true});
@@ -135,7 +135,7 @@ const Layout: React.FC<Props> = (props) => {
 				/>
 
 				<Select
-					name={'Category*'}
+					name={'Category'}
 					placeholder={'Select your category transaction'}
 					data={dataCategory}
 					closeOnSelection={true}
@@ -147,7 +147,7 @@ const Layout: React.FC<Props> = (props) => {
 
 				<Input
 					mode={'outlined'}
-					name={'Total Transactions*'}
+					name={'Total Transactions'}
 					placeholder={'e.g. 2.500.000'}
 					keyboardType={'numeric'}
 					onChangeText={text => {
@@ -157,7 +157,7 @@ const Layout: React.FC<Props> = (props) => {
 				/>
 
 				<Select
-					name={'Type*'}
+					name={'Type'}
 					placeholder={'Select your type Debit or Credit'}
 					data={typeData}
 					closeOnSelection={true}
@@ -170,7 +170,7 @@ const Layout: React.FC<Props> = (props) => {
 				<Input
 					mode={'outlined'}
 					date={true}
-					name={'Date Transaction*'}
+					name={'Date Transaction'}
 					value={modalDate}
 					onPress={() => setShowDatePicker(true)}
 				/>
@@ -201,11 +201,6 @@ const styles = StyleSheet.create({
   },
 	inputWrapper: {
 		marginBottom: Mixins.scaleSize(30),
-	},
-	rightAct: {
-		color: Colors.SECONDARY,
-		fontSize: Mixins.scaleFont(16),
-		marginRight: Mixins.scaleSize(10),
 	},
 });
 
