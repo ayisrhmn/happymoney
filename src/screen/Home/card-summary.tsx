@@ -6,6 +6,7 @@ import Ionicons from 'react-native-vector-icons/Ionicons';
 import Card from '@components/card';
 import {Colors, Helper, Mixins} from '@utils/index';
 
+import {VictoryPie, VictoryTheme} from 'victory-native';
 import moment from 'moment';
 
 type Props = {
@@ -16,20 +17,37 @@ type Props = {
 const Layout: React.FC<Props> = (props) => {
   const {data, refresh} = props;
 
+	const balance = data.debit - data.credit;
+
+	const graphData = [
+		{
+			x: 'Balance',
+			y: balance,
+		},
+		{
+			x: 'Debit',
+			y: data.debit
+		},
+		{
+			x: 'Credit',
+			y: data.credit
+		},
+	];
+
   return (
 		<Card style={styles.cardContainer}>
 			<View style={[styles.row, styles.summary]}>
 				<Text style={styles.title}>
-					Summary
+					Summary Chart
 				</Text>
 				<View style={styles.row}>
 					<Ionicons
 						name={'time'}
 						size={Mixins.scaleFont(25)}
-						color={Colors.SUCCESS}
+						color={Colors.PRIMARY}
 					/>
 					<Text style={styles.time}>
-						{moment(data.summary_data.date).format('MMM-YYYY')}
+						{moment().format('MMMM YYYY')}
 					</Text>
 				</View>
 			</View>
@@ -39,38 +57,36 @@ const Layout: React.FC<Props> = (props) => {
 					animating={true}
 					size={'large'}
 					color={Colors.PRIMARY}
-					style={{marginTop: Mixins.scaleSize(10)}}
+					style={{marginVertical: Mixins.scaleSize(50)}}
 				/>
 			)}
 
 			{!refresh && (
-				<>
-					<View style={[styles.row, styles.space]}>
-						<Text style={styles.text}>
-							Balance
-						</Text>
-						<Text style={styles.title}>
-							{Helper.numberWithSeparator(data.summary_data.balance)}
-						</Text>
-					</View>
-					<View style={[styles.row, styles.space]}>
-						<Text style={styles.text}>
-							Biggest Debit
-						</Text>
-						<Text style={styles.title}>
-							{Helper.numberWithSeparator(data.summary_data.debit)}
-						</Text>
-					</View>
-					<View style={[styles.row, styles.space]}>
-						<Text style={styles.text}>
-							Biggest Credit
-						</Text>
-						<Text style={styles.title}>
-							{Helper.numberWithSeparator(data.summary_data.credit)}
-						</Text>
-					</View>
-				</>
+				<View style={styles.chartContainer}>
+					<VictoryPie
+						data={graphData}
+						height={Mixins.scaleSize(230)}
+						theme={VictoryTheme.material}
+						colorScale={[Colors.PRIMARY, Colors.SUCCESS, Colors.ALERT]}
+						labels={({datum}) => `${Helper.numberWithSeparator(datum.y)}`}
+					/>
+				</View>
 			)}
+
+			<View style={[styles.row, styles.legendContainer]}>
+				{graphData.map((item: any, i: any) => (
+					<View style={styles.row} key={i}>
+						<View style={
+							item.x === 'Balance' && [styles.legend, styles.balance] ||
+							item.x === 'Debit' && [styles.legend, styles.debit] ||
+							item.x === 'Credit' && [styles.legend, styles.credit]
+						} />
+						<Text style={styles.textLegend}>
+							{item.x}
+						</Text>
+					</View>
+				))}
+			</View>
 		</Card>
   );
 };
@@ -84,10 +100,15 @@ const styles = StyleSheet.create({
 	},
 	cardContainer: {
 		marginHorizontal: Mixins.scaleSize(12),
+		padding: 0,
+	},
+	chartContainer: {
+		alignItems: 'center',
 	},
 	summary: {
 		justifyContent: 'space-between',
-		marginBottom: Mixins.scaleSize(16),
+		paddingTop: Mixins.scaleSize(14),
+		paddingHorizontal: Mixins.scaleSize(14),
 	},
 	title: {
 		color: Colors.BLACK,
@@ -96,16 +117,34 @@ const styles = StyleSheet.create({
 		textAlignVertical: 'center',
 	},
 	time: {
-		color: Colors.SUCCESS,
+		color: Colors.PRIMARY,
 		fontSize: Mixins.scaleFont(16),
 		fontWeight: 'bold',
 		textAlignVertical: 'center',
 		marginLeft: Mixins.scaleSize(5),
 	},
-	text: {
-		color: Colors.BLACK,
+	legendContainer: {
+		justifyContent: 'space-around',
+		paddingHorizontal: Mixins.scaleSize(14),
+		paddingBottom: Mixins.scaleSize(24),
+	},
+	legend: {
+		width: Mixins.scaleSize(16),
+		height: Mixins.scaleSize(16),
+		borderRadius: Mixins.scaleSize(50),
+	},
+	balance: {
+		backgroundColor: Colors.PRIMARY,
+	},
+	debit: {
+		backgroundColor: Colors.SUCCESS,
+	},
+	credit: {
+		backgroundColor: Colors.ALERT,
+	},
+	textLegend: {
+		marginLeft: Mixins.scaleSize(5),
 		fontSize: Mixins.scaleFont(14),
-		marginBottom: Mixins.scaleSize(2),
 	},
 });
 

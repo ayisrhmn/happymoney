@@ -29,6 +29,7 @@ interface LayoutProps {
   onOpen?: Function;
   onSelect?: Function;
   error?: any;
+	disabled?: boolean;
 }
 
 const Select = (props: LayoutProps) => {
@@ -104,7 +105,12 @@ const Select = (props: LayoutProps) => {
 				name={name}
 				select={true}
         placeholder={placeholder ? placeholder : ''}
-        value={displayValue}
+				disabled={props?.disabled}
+        value={
+					props?.value === undefined
+						? displayValue
+						: props?.value
+				}
 				error={props?.error}
         onPress={() => {
           setIsModalVisible(true);

@@ -4,8 +4,7 @@ import {
 	StyleSheet,
 	Text,
 	TouchableOpacity,
-	ScrollView,
-	RefreshControl,
+	FlatList,
 } from 'react-native';
 import {TextInput, ActivityIndicator} from 'react-native-paper';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
@@ -124,6 +123,8 @@ const Layout: React.FC<Props> = (props) => {
 			}
 
 			return;
+		}).sort((a: any, b: any) => {
+			return a.transaction.date < b.transaction.date ? -1 : 1;
 		});
 	};
 
@@ -233,23 +234,34 @@ const Layout: React.FC<Props> = (props) => {
 							No transaction available
 						</Text>
 					) || (
-						<ScrollView
-							refreshControl={
-								<RefreshControl
-									refreshing={refresh}
-									onRefresh={getData}
-								/>
-							}
-						>
-							{filterData().map((item: any, i: number) => (
+						<FlatList
+							data={filterData()}
+							keyExtractor={item => item.id}
+							refreshing={refresh}
+							onRefresh={getData}
+							renderItem={({item}) => (
 								<Card
 									style={[
 										styles.row,
 										styles.cardContainer,
 										{justifyContent: 'space-between'},
 									]}
-									key={i}
-									onPress={() => console.log('press')}
+									onPress={() => {
+										navigation.navigate('TransactionDetail', {
+											user: {
+												...user,
+											},
+											data: {
+												id: item.id,
+												title: item.transaction.title,
+												desc: item.transaction.desc,
+												category: item.transaction.category,
+												total: item.transaction.total.toString(),
+												type: item.transaction.type,
+												date: item.transaction.date,
+											},
+										});
+									}}
 								>
 									<View>
 										<Text style={styles.cardTitle}>
@@ -297,8 +309,8 @@ const Layout: React.FC<Props> = (props) => {
 										</Text>
 									</View>
 								</Card>
-							))}
-						</ScrollView>
+							)}
+						/>
 					)}
 				</>
 			)}

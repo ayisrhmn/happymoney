@@ -46,3 +46,29 @@ export const number1Rounding = (x: number) => {
   }
   return x.toString(1);
 };
+
+export const getRandomColor = () => {
+	let letters = 'BCDEF'.split('');
+	let color = '#';
+
+	for (var i = 0; i < 6; i++ ) {
+			color += letters[Math.floor(Math.random() * letters.length)];
+	};
+
+	return color;
+};
+
+export const getInitialName = (v: any) => {
+	const strArr = v?.split(' ');
+	const totalStr = strArr?.length;
+
+	if (totalStr === 1) {
+		return strArr[0].charAt(0);
+	} else if (totalStr === 2) {
+		return strArr[0].charAt(0) + strArr[1].charAt(0);
+	} else if (totalStr >= 3) {
+		return strArr[0].charAt(0) + strArr[2].charAt(0);
+	}
+
+	return v;
+};

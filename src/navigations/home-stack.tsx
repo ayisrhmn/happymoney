@@ -13,6 +13,7 @@ import Home from '@screen/Home';
 import Category from '@screen/Category';
 import Transactions from '@screen/Transactions';
 import TransactionForm from '@screen/TransactionForm';
+import TransactionDetail from '@screen/TransactionDetail';
 import Profile from '@screen/Profile';
 import EditProfile from '@screen/EditProfile';
 import ChangePassword from '@screen/ChangePassword';
@@ -82,6 +83,14 @@ function App() {
           component={TransactionForm}
           options={{
             headerTitle: 'Add Transaction',
+          }}
+        />
+
+				<Stack.Screen
+          name={'TransactionDetail'}
+          component={TransactionDetail}
+          options={{
+            headerTitle: 'Detail Transaction',
           }}
         />
 

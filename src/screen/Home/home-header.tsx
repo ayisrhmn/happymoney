@@ -1,8 +1,8 @@
 import React from 'react';
 import {View, StyleSheet, Text, TouchableOpacity} from 'react-native';
-import Ionicons from 'react-native-vector-icons/Ionicons';
 
-import {Colors, Mixins} from '@utils/index';
+import Avatar from '@components/avatar';
+import {Colors, Mixins, Helper} from '@utils/index';
 
 type Props = {
   navigation: any;
@@ -26,10 +26,10 @@ const Layout: React.FC<Props> = (props) => {
 			<TouchableOpacity
 				onPress={() => navigation.navigate('Profile', user)}
 			>
-				<Ionicons
-					name={'person-circle'}
-					size={Mixins.scaleFont(54)}
-					color={Colors.SECONDARY}
+				<Avatar
+					size={Mixins.scaleFont(50)}
+					label={Helper.getInitialName(user.name)}
+					color={user.avatar_color}
 				/>
 			</TouchableOpacity>
 		</View>
