@@ -30,7 +30,8 @@ const Layout: React.FC<Props> = (props) => {
 
 	const isFocused = useIsFocused();
 
-	const [dataCategory, setDataCategory] = React.useState([] as any);
+	const [dataCategory, setDataCategory] = React.useState([]) as any;
+	const [transaction, setTransaction] = React.useState([]) as any;
 
 	const [refresh, setRefresh] = React.useState(false);
 	const [preview, setPreview] = React.useState(false);
@@ -62,7 +63,7 @@ const Layout: React.FC<Props> = (props) => {
 	React.useLayoutEffect(() => {
     ctx.setRefreshCallback({
       func: async () => {
-        getCategory();
+        getData();
       },
     });
 
@@ -71,13 +72,13 @@ const Layout: React.FC<Props> = (props) => {
 
 	React.useEffect(() => {
 		if (isFocused) {
-			getCategory();
+			getData();
 		}
 
 		return () => {};
 	}, [isFocused]);
 
-	const getCategory = () => {
+	const getData = () => {
 		setRefresh(true);
 		setDataCategory([]);
 		setDetail({});
@@ -100,6 +101,24 @@ const Layout: React.FC<Props> = (props) => {
 				}
 			})
 			.then(() => setRefresh(false));
+
+		firebase.database()
+			.ref(`transactions/${user?.uid}/`)
+			.once('value', (res) => {
+				if (res.val()) {
+					const dataRes = res.val();
+					const allData = [] as any;
+
+					Object.keys(dataRes).map((key) => {
+						allData.push({
+							id: key,
+							category: dataRes[key].category,
+						});
+					});
+
+					setTransaction(allData);
+				}
+			});
 	};
 
 	const {
@@ -116,37 +135,61 @@ const Layout: React.FC<Props> = (props) => {
   }, [register]);
 
 	const onSubmit = (val: any) => {
-    firebase.database()
-			.ref(`category/${user?.uid}/`)
-			.push(val.category)
-			.then(() => {
-				setPreview(false);
-				getCategory();
-			})
-			.catch((error) => {
-				setPreview(false);
-				showMessage({
-					message: error.message,
-					type: 'danger',
+		const checkData = dataCategory.find(
+			(dt: any) => dt.category.toLowerCase() === val.category.toLowerCase()
+		);
+
+		if (checkData === undefined) {
+			firebase.database()
+				.ref(`category/${user?.uid}/`)
+				.push(val.category)
+				.then(() => {
+					setPreview(false);
+					getData();
+				})
+				.catch((error) => {
+					setPreview(false);
+					showMessage({
+						message: error.message,
+						type: 'danger',
+					});
 				});
+		} else {
+			setPreview(false);
+			showMessage({
+				message: 'Category is already exists.',
+				type: 'danger',
 			});
+		}
   };
 
 	const onDelete = () => {
-		firebase.database()
-			.ref(`category/${user?.uid}/${detail?.id}/`)
-			.remove()
-			.then(() => {
-				setModalDelete(false);
-				getCategory();
-			})
-			.catch((error) => {
-				showMessage({
-					message: error.message,
-					type: 'danger',
-				});
-				setModalDelete(false);
-			})
+		const checkData = transaction.find(
+			(dt: any) => dt.category === detail?.category
+		);
+
+		if (checkData === undefined) {
+			firebase.database()
+				.ref(`category/${user?.uid}/${detail?.id}/`)
+				.remove()
+				.then(() => {
+					setModalDelete(false);
+					getData();
+				})
+				.catch((error) => {
+					setModalDelete(false);
+					showMessage({
+						message: error.message,
+						type: 'danger',
+					});
+				})
+		} else {
+			setModalDelete(false);
+			showMessage({
+				message: 'Category is already exists in Transactions.',
+				type: 'danger',
+			});
+		}
 	};
 
 	const sorting = () => {

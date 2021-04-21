@@ -1,5 +1,5 @@
 import React from 'react';
-import {View, StyleSheet} from 'react-native';
+import {View, StyleSheet, BackHandler} from 'react-native';
 import {useForm} from 'react-hook-form';
 import {showMessage} from 'react-native-flash-message';
 
@@ -18,6 +18,21 @@ const Layout: React.FC<Props> = (props) => {
   const {navigation, route} = props;
 
 	const user = route.params;
+
+	React.useEffect(() => {
+		const backAction = () => {
+      navigation.navigate('Profile', user);
+
+      return true;
+    };
+
+    const backHandler = BackHandler.addEventListener(
+      'hardwareBackPress',
+      backAction
+    );
+
+    return () => backHandler.remove();
+  }, [navigation]);
 
 	const [secure, setSecure] = React.useState(true);
 	const [secureConf, setSecureConf] = React.useState(true);

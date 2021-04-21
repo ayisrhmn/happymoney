@@ -2,6 +2,7 @@ import React from 'react';
 import {View, StyleSheet, Text} from 'react-native';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
+import {showMessage} from 'react-native-flash-message';
 
 import Card from '@components/card';
 import {Colors, Mixins} from '@utils/index';
@@ -9,10 +10,11 @@ import {Colors, Mixins} from '@utils/index';
 type Props = {
 	navigation: any;
 	user: any;
+	category: any;
 };
 
 const Layout: React.FC<Props> = (props) => {
-  const {navigation, user} = props;
+  const {navigation, user, category} = props;
 
 	const listMenu: Array<any> = [
 		{
@@ -34,7 +36,16 @@ const Layout: React.FC<Props> = (props) => {
 			{listMenu.map((item: any, i: number) => (
 				<Card
 					style={styles.cardContainer}
-					onPress={() => navigation.navigate(item.navigate, user)}
+					onPress={() => {
+						if (item.menu === 'Transactions' && category.length == 0) {
+							showMessage({
+								message: 'Please input category first',
+								type: 'warning',
+							});
+						} else {
+							navigation.navigate(item.navigate, user);
+						}
+					}}
 					key={i}
 				>
 					<View style={[

@@ -5,6 +5,7 @@ import {
 	Text,
 	TouchableOpacity,
 	FlatList,
+	BackHandler,
 } from 'react-native';
 import {TextInput, ActivityIndicator} from 'react-native-paper';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
@@ -28,6 +29,21 @@ const Layout: React.FC<Props> = (props) => {
   const {navigation, route} = props;
 
 	const user = route.params;
+
+	React.useEffect(() => {
+		const backAction = () => {
+      navigation.navigate('Home');
+
+      return true;
+    };
+
+    const backHandler = BackHandler.addEventListener(
+      'hardwareBackPress',
+      backAction
+    );
+
+    return () => backHandler.remove();
+  }, [navigation]);
 
 	const isFocused = useIsFocused();
 
