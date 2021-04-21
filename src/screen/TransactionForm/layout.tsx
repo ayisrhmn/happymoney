@@ -1,5 +1,5 @@
 import React from 'react';
-import {View, StyleSheet} from 'react-native';
+import {View, StyleSheet, BackHandler} from 'react-native';
 import DateTimePickerModal from "react-native-modal-datetime-picker";
 import {useForm} from 'react-hook-form';
 import {showMessage} from 'react-native-flash-message';
@@ -22,6 +22,21 @@ const Layout: React.FC<Props> = (props) => {
   const {navigation, route} = props;
 
 	const user = route.params;
+
+	React.useEffect(() => {
+		const backAction = () => {
+      navigation.navigate('Transactions', user);
+
+      return true;
+    };
+
+    const backHandler = BackHandler.addEventListener(
+      'hardwareBackPress',
+      backAction
+    );
+
+    return () => backHandler.remove();
+  }, [navigation]);
 
 	const [dataCategory, setDataCategory] = React.useState([]) as any;
 	const [showDatePicker, setShowDatePicker] = React.useState(false);

@@ -24,6 +24,7 @@ const Layout: React.FC<Props> = (props) => {
 
 	const [refresh, setRefresh] = React.useState(false);
 	const [dataUser, setDataUser] = React.useState({}) as any;
+	const [category, setCategory] = React.useState([]) as any;
 	const [data, setData] = React.useState([]) as any;
 
 	const ctx = useContext(ContainerContext);
@@ -48,6 +49,9 @@ const Layout: React.FC<Props> = (props) => {
 
 	const getData = () => {
 		setRefresh(true);
+		setDataUser({});
+		setCategory([]);
+		setData([]);
 
 		firebase.database()
 			.ref(`users/${user?.uid}/`)
@@ -58,7 +62,25 @@ const Layout: React.FC<Props> = (props) => {
 				}
 			});
 
-			firebase.database()
+		firebase.database()
+			.ref(`category/${user?.uid}/`)
+			.once('value', (res) => {
+				if (res.val()) {
+					const dataRes = res.val();
+					const allData = [] as any;
+
+					Object.keys(dataRes).map((key) => {
+            allData.push({
+              id: key,
+              category: dataRes[key],
+            });
+          });
+
+					setCategory(allData);
+				}
+			});
+
+		firebase.database()
 			.ref(`transactions/${user?.uid}/`)
 			.once('value', (res) => {
 				if (res.val()) {
@@ -125,6 +147,7 @@ const Layout: React.FC<Props> = (props) => {
 
 			<CardMenu
 				user={dataUser}
+				category={category}
 				navigation={navigation}
 			/>
     </View>
