@@ -35,6 +35,13 @@ export const numberWithSeparator = (x: number | string | undefined) => {
   return parts.join(',');
 };
 
+export const valInputWithSeparator = (x: number | string | undefined) => {
+	const addCommas = (num: any) => num.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".");
+  const removeNonNumeric = (num: any) => num.toString().replace(/[^0-9]/g, "");
+
+	return addCommas(removeNonNumeric(x));
+}
+
 export const number1Rounding = (x: number) => {
   if (x === 0) {
     return '0';

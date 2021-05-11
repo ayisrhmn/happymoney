@@ -28,7 +28,7 @@ const Layout: React.FC<Props> = (props) => {
 			>
 				<Avatar
 					size={Mixins.scaleFont(50)}
-					label={Helper.getInitialName(user.name)}
+					label={Helper.getInitialName(user.name?.toUpperCase())}
 					color={user.avatar_color}
 				/>
 			</TouchableOpacity>

@@ -7,6 +7,7 @@ import {Mixins} from '@utils/index';
 interface Props {
   children?: any;
   mode?: any;
+	dark?: any;
 	disabled?: boolean;
 	uppercase?: any;
 	color?: any;

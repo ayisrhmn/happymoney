@@ -1,6 +1,14 @@
 import React from 'react';
-import {View, StyleSheet, Text, BackHandler} from 'react-native';
+import {
+	View,
+	StyleSheet,
+	Text,
+	BackHandler,
+	TouchableOpacity,
+	Linking,
+} from 'react-native';
 import Ionicons from 'react-native-vector-icons/Ionicons';
+import AntDesign from 'react-native-vector-icons/AntDesign';
 import {showMessage} from 'react-native-flash-message';
 import RNRestart from 'react-native-restart';
 
@@ -75,7 +83,7 @@ const Layout: React.FC<Props> = (props) => {
 			<View style={styles.header}>
 				<Avatar
 					size={Mixins.scaleFont(72)}
-					label={Helper.getInitialName(user.name)}
+					label={Helper.getInitialName(user.name?.toUpperCase())}
 					color={user.avatar_color}
 				/>
 				<View style={styles.infoWrapper}>
@@ -123,6 +131,52 @@ const Layout: React.FC<Props> = (props) => {
 					</View>
 				</Card>
 			))}
+
+			<View style={styles.creditContainer}>
+				<Text style={styles.creditText}>
+					v 1.0.0
+				</Text>
+				<View style={styles.row}>
+					<Text style={styles.creditText}>
+						Developed by{' '}
+					</Text>
+					<Text style={[styles.creditText, {fontWeight: 'bold'}]}>
+						Muhammad Fariz Rahman
+					</Text>
+				</View>
+				<View style={[styles.row, {marginTop: Mixins.scaleSize(5)}]}>
+					<TouchableOpacity
+						onPress={() => Linking.openURL('https://instagram.com/ayisrhmn/')}
+					>
+						<AntDesign
+							name={'instagram'}
+							size={Mixins.scaleFont(24)}
+							color={Colors.BLACK}
+							style={{marginRight: Mixins.scaleSize(16)}}
+						/>
+					</TouchableOpacity>
+					<TouchableOpacity
+						onPress={() => Linking.openURL('https://linkedin.com/in/ayisrhmn/')}
+					>
+						<AntDesign
+							name={'linkedin-square'}
+							size={Mixins.scaleFont(24)}
+							color={Colors.BLACK}
+							style={{marginRight: Mixins.scaleSize(16)}}
+						/>
+					</TouchableOpacity>
+					<TouchableOpacity
+						onPress={() => Linking.openURL('https://github.com/ayisrhmn/')}
+					>
+						<AntDesign
+							name={'github'}
+							size={Mixins.scaleFont(24)}
+							color={Colors.BLACK}
+							style={{marginRight: Mixins.scaleSize(16)}}
+						/>
+					</TouchableOpacity>
+				</View>
+			</View>
 		</>
   );
 };
@@ -176,6 +230,15 @@ const styles = StyleSheet.create({
 		fontSize: Mixins.scaleFont(14),
 		marginBottom: Mixins.scaleSize(2),
 	},
+
+	creditContainer: {
+		marginTop: Mixins.scaleSize(50),
+		alignItems: 'center',
+	},
+	creditText: {
+		fontSize: Mixins.scaleFont(14),
+		color: Colors.BLACK,
+	}
 });
 
 export default container(Layout);
