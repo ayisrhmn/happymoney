@@ -8,7 +8,7 @@ import container from '@components/container';
 import Input from '@components/input';
 import Button from '@components/button';
 import Select from '@components/select';
-import {Colors, Mixins} from '@utils/index';
+import {Colors, Helper, Mixins} from '@utils/index';
 import firebase from '@database/firebase';
 
 import moment from 'moment';
@@ -44,6 +44,8 @@ const Layout: React.FC<Props> = (props) => {
 	const [modalDate, setModalDate] = React.useState('');
 
 	const [desc, setDesc] = React.useState('');
+
+	const [displayAmount, setDisplayAmount] = React.useState('');
 
 	React.useEffect(() => {
 		getData();
@@ -99,11 +101,13 @@ const Layout: React.FC<Props> = (props) => {
   }, [register]);
 
 	const onSubmit = (val: any) => {
+		let valTotal = val.total.replace('.', '');
+
 		let data = {
 			title: val.title,
 			desc: desc,
 			category: val.category,
-			total: val.total,
+			total: parseInt(valTotal),
 			type: val.type,
 			date: modalDate,
 		};
@@ -165,8 +169,10 @@ const Layout: React.FC<Props> = (props) => {
 					name={'Total Transactions'}
 					placeholder={'e.g. 2.500.000'}
 					keyboardType={'numeric'}
+					value={Helper.valInputWithSeparator(displayAmount)}
 					onChangeText={text => {
-						setValue('total', parseInt(text), {shouldValidate: true});
+						setValue('total', text, {shouldValidate: true});
+						setDisplayAmount(text);
 					}}
 					error={errors.total}
 				/>

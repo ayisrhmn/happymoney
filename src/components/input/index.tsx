@@ -19,6 +19,7 @@ interface Props {
 	setFocus?: any;
 	disabled?: boolean;
   placeholder?: any;
+  defaultValue?: any;
   value?: any;
 	error?: any;
 	secureTextEntry?: boolean;

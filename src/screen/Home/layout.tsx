@@ -9,6 +9,7 @@ import moment from 'moment';
 
 import HomeHeader from './home-header';
 import CardSummary from './card-summary';
+import CardMost from './card-most';
 import CardMenu from './card-menu';
 
 type Props = {
@@ -90,6 +91,8 @@ const Layout: React.FC<Props> = (props) => {
 					Object.keys(dataRes).map((key) => {
             allData.push({
               id: key,
+							title: dataRes[key].title,
+							category: dataRes[key].category,
               total: dataRes[key].total,
               type: dataRes[key].type,
               date: dataRes[key].date,
@@ -103,35 +106,135 @@ const Layout: React.FC<Props> = (props) => {
   };
 
 	const sumData = {
-		debit: data
-			.filter((v: any) => {
-				const filterBy = {
-					date: moment(v.date).format('MMMM YYYY') === moment().format('MMMM YYYY'),
-					type: v.type === 'Debit',
-				}
+		debit:
+			data
+				.filter((v: any) => {
+					const filterBy = {
+						date: moment(v.date).format('MMMM YYYY') === moment().format('MMMM YYYY'),
+						type: v.type === 'Debit',
+					}
 
-				if (filterBy.date && filterBy.type) {
-					return true;
-				}
+					if (filterBy.date && filterBy.type) {
+						return true;
+					}
 
-				return;
+					return;
+				})
+				.reduce((i: any, o: any) => o.total + i, 0),
+		credit:
+			data
+				.filter((v: any) => {
+					const filterBy = {
+						date: moment(v.date).format('MMMM YYYY') === moment().format('MMMM YYYY'),
+						type: v.type === 'Credit',
+					}
+
+					if (filterBy.date && filterBy.type) {
+						return true;
+					}
+
+					return;
+				})
+				.reduce((i: any, o: any) => o.total + i, 0),
+	};
+
+	// get most debit function
+	const calculateMostDebit = () => {
+		let getData = [] as any;
+
+		category.map((ct: any) => {
+			let getDebit =
+				data
+					.filter((v: any) => {
+						const filterBy = {
+							date: moment(v.date).format('MMMM YYYY') === moment().format('MMMM YYYY'),
+							type: v.type === 'Debit',
+							category: v.category === ct.category,
+						}
+
+						if (filterBy.date && filterBy.type && filterBy.category) {
+							return true;
+						}
+
+						return;
+					})
+					.reduce((i: any, o: any) => o.total + i, 0);
+
+			return getData = [
+				...getData,
+				{
+					category: ct.category,
+					total: getDebit,
+				},
+			];
+		});
+
+		return getData;
+	};
+
+	const getMostDebit = () => {
+		let totalMax = Math.max.apply(
+			Math, calculateMostDebit().map((o: any) => {
+				return o.total;
 			})
-			.reduce((i: any, o: any) => o.total + i, 0),
-		credit: data
-			.filter((v: any) => {
-				const filterBy = {
-					date: moment(v.date).format('MMMM YYYY') === moment().format('MMMM YYYY'),
-					type: v.type === 'Credit',
-				}
+		);
 
-				if (filterBy.date && filterBy.type) {
-					return true;
-				}
+		let mostDebit = calculateMostDebit().filter((o: any) => {
+			return o.total == totalMax;
+		});
 
-				return;
+		return mostDebit[0];
+	};
+	// end get most debit function
+
+	// get most credit function
+	const calculateMostCredit = () => {
+		let getData = [] as any;
+
+		category.map((ct: any) => {
+			let getCredit =
+				data
+					.filter((v: any) => {
+						const filterBy = {
+							date: moment(v.date).format('MMMM YYYY') === moment().format('MMMM YYYY'),
+							type: v.type === 'Credit',
+							category: v.category === ct.category,
+						}
+
+						if (filterBy.date && filterBy.type && filterBy.category) {
+							return true;
+						}
+
+						return;
+					})
+					.reduce((i: any, o: any) => o.total + i, 0);
+
+			return getData = [
+				...getData,
+				{
+					category: ct.category,
+					total: getCredit,
+				},
+			];
+		});
+
+		return getData;
+	};
+
+	const getMostCredit = () => {
+		let totalMax = Math.max.apply(
+			Math, calculateMostCredit().map((o: any) => {
+				return o.total;
 			})
-			.reduce((i: any, o: any) => o.total + i, 0),
-	}
+		);
+
+		let mostCredit = calculateMostCredit().filter((o: any) => {
+			return o.total == totalMax;
+		});
+
+		return mostCredit[0];
+	};
+	// end get most credit function
 
   return (
     <View>
@@ -143,6 +246,11 @@ const Layout: React.FC<Props> = (props) => {
 			<CardSummary
 				data={sumData}
 				refresh={refresh}
+			/>
+
+			<CardMost
+				mostDebit={getMostDebit()}
+				mostCredit={getMostCredit()}
 			/>
 
 			<CardMenu

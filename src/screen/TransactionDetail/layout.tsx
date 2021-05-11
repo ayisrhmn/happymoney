@@ -8,7 +8,7 @@ import container from '@components/container';
 import Input from '@components/input';
 import Button from '@components/button';
 import Select from '@components/select';
-import {Colors, Mixins} from '@utils/index';
+import {Colors, Helper, Mixins} from '@utils/index';
 import firebase from '@database/firebase';
 
 import moment from 'moment';
@@ -46,6 +46,8 @@ const Layout: React.FC<Props> = (props) => {
 	const [modalDate, setModalDate] = React.useState('');
 
 	const [disabled, setDisabled] = React.useState(true);
+
+	const [displayAmount, setDisplayAmount] = React.useState(detail?.data?.total);
 
 	React.useEffect(() => {
 		getData();
@@ -97,12 +99,14 @@ const Layout: React.FC<Props> = (props) => {
   };
 
 	const onSubmit = () => {
+		let valTotal = dataDetail.total.replace('.', '');
+
 		let newData = {
 			id: detail.data?.id,
 			title: dataDetail.title,
 			desc: dataDetail.desc,
 			category: dataDetail.category,
-			total: parseInt(dataDetail.total),
+			total: parseInt(valTotal),
 			type: dataDetail.type,
 			date: modalDate,
 		};
@@ -131,7 +135,7 @@ const Layout: React.FC<Props> = (props) => {
 			.remove()
 			.then(() => {
 				showMessage({
-					message: 'Transaction has been deleted.',
+					message: 'Transaction deleted successfully.',
 					type: 'danger',
 				});
 				navigation.replace('Transactions', detail.user);
@@ -170,7 +174,7 @@ const Layout: React.FC<Props> = (props) => {
 								? false
 								: errorMessage.form
 					}}
-					defaultValue={dataDetail?.title}
+					defaultValue={dataDetail.title}
 				/>
 
 				{(dataDetail.desc !== '' || !disabled) && (
@@ -196,7 +200,7 @@ const Layout: React.FC<Props> = (props) => {
 						)}
 						name={'desc'}
 						rules={{required: false}}
-						defaultValue={dataDetail?.desc}
+						defaultValue={dataDetail.desc}
 					/>
 				)}
 
@@ -222,10 +226,11 @@ const Layout: React.FC<Props> = (props) => {
 							placeholder={'e.g. 2.500.000'}
 							keyboardType={'numeric'}
 							disabled={disabled}
-							value={dataDetail.total}
+							value={Helper.valInputWithSeparator(displayAmount)}
 							onChangeText={text => {
 								setDataDetail({...dataDetail, total: text});
 								onChange(text);
+								setDisplayAmount(text);
 							}}
 							error={errors.total}
 						/>
@@ -237,7 +242,7 @@ const Layout: React.FC<Props> = (props) => {
 								? false
 								: errorMessage.form
 					}}
-					defaultValue={dataDetail?.total}
+					defaultValue={dataDetail.total}
 				/>
 
 				<Select
@@ -276,9 +281,10 @@ const Layout: React.FC<Props> = (props) => {
 					<Button
 						uppercase={false}
 						mode={'contained'}
+						dark={true}
+						color={Colors.ALERT}
 						style={{
 							width: '48%',
-							backgroundColor: Colors.ALERT,
 						}}
 						onPress={() => onDelete()}
 					>

@@ -1,17 +1,21 @@
-import React, {useContext} from 'react';
+import React from 'react';
 import {
 	View,
 	StyleSheet,
 	Text,
 	TouchableOpacity,
+	FlatList,
+	Animated,
 } from 'react-native';
-import {Chip, ActivityIndicator} from 'react-native-paper';
+import {RectButton} from 'react-native-gesture-handler';
+import {ActivityIndicator} from 'react-native-paper';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 import {useForm} from 'react-hook-form';
 import {showMessage} from 'react-native-flash-message';
+import Swipeable from 'react-native-gesture-handler/Swipeable';
 
 import {useIsFocused} from '@react-navigation/native';
-import container, {ContainerContext} from '@components/container';
+import container from '@components/container';
 import Modal from '@components/modal';
 import Input from '@components/input';
 import Button from '@components/button';
@@ -52,18 +56,6 @@ const Layout: React.FC<Props> = (props) => {
 						/>
 					</TouchableOpacity>
 				);
-      },
-    });
-
-    return () => {};
-  }, [navigation]);
-
-	const ctx = useContext(ContainerContext);
-
-	React.useLayoutEffect(() => {
-    ctx.setRefreshCallback({
-      func: async () => {
-        getData();
       },
     });
 
@@ -146,6 +138,10 @@ const Layout: React.FC<Props> = (props) => {
 				.then(() => {
 					setPreview(false);
 					getData();
+					showMessage({
+						message: 'Category added successfully.',
+						type: 'success',
+					});
 				})
 				.catch((error) => {
 					setPreview(false);
@@ -175,6 +171,10 @@ const Layout: React.FC<Props> = (props) => {
 				.then(() => {
 					setModalDelete(false);
 					getData();
+					showMessage({
+						message: 'Category deleted successfully.',
+						type: 'danger',
+					});
 				})
 				.catch((error) => {
 					setModalDelete(false);
@@ -194,48 +194,82 @@ const Layout: React.FC<Props> = (props) => {
 
 	const sorting = () => {
 		return dataCategory.sort((a: any, b: any) => {
-			return a.category < b.category ? -1 : 1;
+			return a.category.toLowerCase() < b.category.toLowerCase() ? -1 : 1;
 		});
 	};
 
   return (
-		<View style={styles.container}>
+		<>
 			{refresh && (
 				<ActivityIndicator
 					animating={true}
 					size={'large'}
 					color={Colors.PRIMARY}
-					style={{marginTop: Mixins.scaleSize(10)}}
+					style={{marginTop: Mixins.scaleSize(24)}}
 				/>
 			)}
 
 			{!refresh && (
-				<View style={[styles.row, styles.chipContainer]}>
+				<>
 					{dataCategory.length == 0 && (
 						<Text style={styles.textEmpty}>
 							No category available
 						</Text>
 					) || (
-						<>
-							{sorting().map((item: any, i: number) => (
-								<Chip
-									style={styles.chipStyle}
-									textStyle={styles.chipText}
-									onClose={() => {
-										setModalDelete(true)
-										setDetail({
-											id: item.id,
-											category: item.category,
+						<FlatList
+							data={sorting()}
+							keyExtractor={(item, idx) => idx + item}
+							refreshing={refresh}
+							onRefresh={getData}
+							renderItem={({item}) => (
+								<Swipeable
+									renderRightActions={(dragX: any) => {
+										const trans = dragX.interpolate({
+											inputRange: [-80, 0],
+											outputRange: [1, 0],
 										});
-									}}
-									key={i}
-								>
-									{item.category}
-								</Chip>
-							))}
-						</>
+
+										return (
+											<Animated.View
+												style={{
+													transform: [{translateX: trans}],
+													backgroundColor: 'red',
+													marginBottom: 5,
+												}}>
+												<RectButton
+													style={{
+														justifyContent: 'center',
+														alignItems: 'center',
+														flex: 1,
+														paddingHorizontal: Mixins.scaleSize(20),
+													}}
+													onPress={() => {
+														setModalDelete(true)
+														setDetail({
+															id: item.id,
+															category: item.category,
+														});
+													}}
+												>
+													<MaterialIcons
+														name={'delete'}
+														size={Mixins.scaleFont(26)}
+														color={Colors.WHITE}
+													/>
+												</RectButton>
+											</Animated.View>
+										);
+									}}>
+									<View style={styles.listItem}>
+										<Text style={styles.listText}>
+											{item.category}
+										</Text>
+									</View>
+								</Swipeable>
+							)}
+						/>
 					)}
-				</View>
+				</>
 			)}
 
 			<Modal
@@ -310,6 +344,8 @@ const Layout: React.FC<Props> = (props) => {
 						<Button
 							uppercase={false}
 							mode={'contained'}
+							dark={true}
+							color={Colors.ALERT}
 							style={{
 								width: '47%',
 							}}
@@ -320,34 +356,29 @@ const Layout: React.FC<Props> = (props) => {
 					</View>
 				</View>
 			</Modal>
-		</View>
+		</>
   );
 };
 
 const styles = StyleSheet.create({
-  container: {
-		padding: Mixins.scaleSize(12),
-  },
 	row: {
 		flexDirection: 'row',
 	},
-	chipContainer: {
-		flexWrap: 'wrap',
-		justifyContent: 'space-between',
+	listItem: {
+		padding: Mixins.scaleSize(12),
+		backgroundColor: Colors.WHITE,
+		marginBottom: 5,
 	},
-	chipStyle: {
-		backgroundColor: Colors.SECONDARY,
-		marginBottom: Mixins.scaleSize(12),
-		flexBasis: '48%',
-	},
-	chipText: {
+	listText: {
 		fontSize: Mixins.scaleFont(16),
+		color: Colors.BLACK,
 	},
 	textEmpty: {
 		flex: 1,
 		textAlign: 'center',
 		fontSize: Mixins.scaleFont(18),
 		color: Colors.BLACK,
+		marginTop: Mixins.scaleSize(12),
 	},
 	modalHeader: {
 		padding: Mixins.scaleSize(12),
@@ -376,4 +407,4 @@ const styles = StyleSheet.create({
 	},
 });
 
-export default container(Layout);
+export default container(Layout, false);
