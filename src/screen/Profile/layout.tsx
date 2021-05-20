@@ -134,7 +134,7 @@ const Layout: React.FC<Props> = (props) => {
 
 			<View style={styles.creditContainer}>
 				<Text style={styles.creditText}>
-					v 1.0.1
+					v 1.0.2
 				</Text>
 				<View style={styles.row}>
 					<Text style={styles.creditText}>
