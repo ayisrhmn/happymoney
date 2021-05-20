@@ -2,6 +2,7 @@ import React from 'react';
 import {View, StyleSheet, Text} from 'react-native';
 import {ActivityIndicator} from 'react-native-paper';
 import Ionicons from 'react-native-vector-icons/Ionicons';
+import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 
 import Card from '@components/card';
 import {Colors, Helper, Mixins} from '@utils/index';
@@ -17,38 +18,62 @@ type Props = {
 const Layout: React.FC<Props> = (props) => {
   const {data, refresh} = props;
 
-	const balance = data.debit - data.credit;
+	const balance = () => {
+		return data.income - data.expense;
+	};
+
+	const precentageExpense = () => {
+		return (
+			data.income == 0
+				? data.expense / data.expense * 1
+				: data.expense / data.income * 1
+		);
+	};
+
+	const precentageIncome = () => {
+		return (data.income / data.income * 1) - precentageExpense();
+	};
 
 	const graphData = [
 		{
-			x: 'Balance',
-			y: balance,
+			x: 'Income',
+			y: isNaN(precentageIncome()) ? 0 : precentageIncome(),
 		},
 		{
-			x: 'Debit',
-			y: data.debit
-		},
-		{
-			x: 'Credit',
-			y: data.credit
+			x: 'Expense',
+			y: isNaN(precentageExpense()) ? 0 : precentageExpense(),
 		},
 	];
 
   return (
 		<Card style={styles.cardContainer}>
 			<View style={[styles.row, styles.summary]}>
-				<Text style={styles.title}>
-					Summary Chart
-				</Text>
+				<View style={styles.row}>
+					<MaterialIcons
+						name={'account-balance-wallet'}
+						size={Mixins.scaleFont(24)}
+						color={Colors.PRIMARY}
+					/>
+					<View>
+						<Text style={styles.title}>
+							Balance
+						</Text>
+						<Text style={styles.title}>
+							{Helper.numberWithSeparator(balance())}
+						</Text>
+					</View>
+				</View>
 				<View style={styles.row}>
 					<Ionicons
 						name={'time'}
-						size={Mixins.scaleFont(25)}
-						color={Colors.PRIMARY}
+						size={Mixins.scaleFont(24)}
+						color={Colors.BLACK}
 					/>
-					<Text style={styles.time}>
-						{moment().format('MMMM YYYY')}
-					</Text>
+					<View>
+						<Text style={styles.date}>
+							{moment().format('MMMM YYYY')}
+						</Text>
+					</View>
 				</View>
 			</View>
 
@@ -67,23 +92,44 @@ const Layout: React.FC<Props> = (props) => {
 						data={graphData}
 						height={Mixins.scaleSize(230)}
 						theme={VictoryTheme.material}
-						colorScale={[Colors.PRIMARY, Colors.SUCCESS, Colors.ALERT]}
-						labels={({datum}) => `${Helper.numberWithSeparator(datum.y)}`}
+						colorScale={[Colors.SUCCESS, Colors.ALERT]}
+						labels={({datum}) => `${datum.y.toFixed(2) * 100}%`}
+						style={{
+							labels: {
+								fontSize: Mixins.scaleSize(14),
+								fontWeight: 'bold',
+								color: Colors.BLACK,
+							}
+						}}
 					/>
 				</View>
 			)}
 
 			<View style={[styles.row, styles.legendContainer]}>
 				{graphData.map((item: any, i: any) => (
-					<View style={styles.row} key={i}>
-						<View style={
-							item.x === 'Balance' && [styles.legend, styles.balance] ||
-							item.x === 'Debit' && [styles.legend, styles.debit] ||
-							item.x === 'Credit' && [styles.legend, styles.credit]
-						} />
-						<Text style={styles.textLegend}>
-							{item.x}
-						</Text>
+					<View style={{alignItems: 'center'}}>
+						<View style={styles.row} key={i}>
+							<View style={
+								item.x === 'Income' && [styles.legend, styles.income] ||
+								item.x === 'Expense' && [styles.legend, styles.expense]
+							} />
+							<View>
+								<Text style={
+									item.x === 'Income' && [styles.textLegend, styles.textIncome] ||
+									item.x === 'Expense' && [styles.textLegend, styles.textExpense]
+								}>
+									{item.x}
+								</Text>
+								<Text style={
+									item.x === 'Income' && [styles.textLegend, styles.textIncome] ||
+									item.x === 'Expense' && [styles.textLegend, styles.textExpense]
+								}>
+									{Helper.numberWithSeparator(
+										item.x === 'Income' ? data.income : data.expense
+									)}
+								</Text>
+							</View>
+						</View>
 					</View>
 				))}
 			</View>
@@ -111,13 +157,14 @@ const styles = StyleSheet.create({
 		paddingHorizontal: Mixins.scaleSize(14),
 	},
 	title: {
-		color: Colors.BLACK,
+		color: Colors.PRIMARY,
 		fontSize: Mixins.scaleFont(16),
 		fontWeight: 'bold',
 		textAlignVertical: 'center',
+		marginLeft: Mixins.scaleSize(5),
 	},
-	time: {
-		color: Colors.PRIMARY,
+	date: {
+		color: Colors.BLACK,
 		fontSize: Mixins.scaleFont(16),
 		fontWeight: 'bold',
 		textAlignVertical: 'center',
@@ -133,18 +180,23 @@ const styles = StyleSheet.create({
 		height: Mixins.scaleSize(16),
 		borderRadius: Mixins.scaleSize(50),
 	},
-	balance: {
-		backgroundColor: Colors.PRIMARY,
-	},
-	debit: {
+	income: {
 		backgroundColor: Colors.SUCCESS,
 	},
-	credit: {
+	expense: {
 		backgroundColor: Colors.ALERT,
 	},
 	textLegend: {
 		marginLeft: Mixins.scaleSize(5),
 		fontSize: Mixins.scaleFont(14),
+		fontWeight: 'bold',
+		color: Colors.BLACK,
+	},
+	textIncome: {
+		color: Colors.SUCCESS,
+	},
+	textExpense: {
+		color: Colors.ALERT,
 	},
 });
 
