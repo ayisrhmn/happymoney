@@ -197,9 +197,9 @@ const Layout: React.FC<Props> = (props) => {
 					</View>
 				</TouchableOpacity>
 				<TouchableOpacity
-					onPress={() => setFilter('Debit')}
+					onPress={() => setFilter('Income')}
 				>
-					<View style={filter === 'Debit' && [
+					<View style={filter === 'Income' && [
 						styles.filterButton,
 						styles.filterActive
 					] || [
@@ -207,17 +207,17 @@ const Layout: React.FC<Props> = (props) => {
 						styles.filterDefault
 					]}>
 						<Text
-							style={filter === 'Debit'
+							style={filter === 'Income'
 								? styles.filterLabelActive
 								: styles.filterLabel}>
-							Debit
+							Income
 						</Text>
 					</View>
 				</TouchableOpacity>
 				<TouchableOpacity
-					onPress={() => setFilter('Credit')}
+					onPress={() => setFilter('Expense')}
 				>
-					<View style={filter === 'Credit' && [
+					<View style={filter === 'Expense' && [
 						styles.filterButton,
 						styles.filterActive
 					] || [
@@ -225,10 +225,10 @@ const Layout: React.FC<Props> = (props) => {
 						styles.filterDefault
 					]}>
 						<Text
-							style={filter === 'Credit'
+							style={filter === 'Expense'
 								? styles.filterLabelActive
 								: styles.filterLabel}>
-							Credit
+							Expense
 						</Text>
 					</View>
 				</TouchableOpacity>
@@ -308,17 +308,17 @@ const Layout: React.FC<Props> = (props) => {
 									</View>
 
 									<Text style={
-										item.transaction.type === 'Debit'
-										? [styles.cardValue, styles.valueDebit]
-										: [styles.cardValue, styles.valueCredit]
+										item.transaction.type === 'Income'
+										? [styles.cardValue, styles.valueIncome]
+										: [styles.cardValue, styles.valueExpense]
 									}>
 										{Helper.numberWithSeparator(item.transaction.total)}
 									</Text>
 
 									<View style={
-										item.transaction.type === 'Debit'
-										? [styles.statusBadge, styles.badgeDebit]
-										: [styles.statusBadge, styles.badgeCredit]
+										item.transaction.type === 'Income'
+										? [styles.statusBadge, styles.badgeIncome]
+										: [styles.statusBadge, styles.badgeExpense]
 									}>
 										<Text style={styles.statusText}>
 											{item.transaction.type}
@@ -412,10 +412,10 @@ const styles = StyleSheet.create({
 		fontWeight: 'bold',
 		textAlign: 'right',
 	},
-	valueDebit: {
+	valueIncome: {
 		color: Colors.SUCCESS,
 	},
-	valueCredit: {
+	valueExpense: {
 		color: Colors.ALERT,
 	},
 	statusBadge: {
@@ -423,14 +423,14 @@ const styles = StyleSheet.create({
 		borderRadius: Mixins.scaleSize(50),
 		marginTop: Mixins.scaleSize(6),
 		position: 'absolute',
-		width: Mixins.scaleSize(64),
+		width: Mixins.scaleSize(76),
 		right: 12,
 		top: 38,
 	},
-	badgeDebit: {
+	badgeIncome: {
 		backgroundColor: Colors.SUCCESS,
 	},
-	badgeCredit: {
+	badgeExpense: {
 		backgroundColor: Colors.ALERT,
 	},
 	statusText: {

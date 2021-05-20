@@ -17,7 +17,7 @@ type Props = {
 const Layout: React.FC<Props> = (props) => {
   const {data, refresh} = props;
 
-	const balance = data.debit - data.credit;
+	const balance = data.income - data.expense;
 
 	const graphData = [
 		{
@@ -25,12 +25,12 @@ const Layout: React.FC<Props> = (props) => {
 			y: balance,
 		},
 		{
-			x: 'Debit',
-			y: data.debit
+			x: 'Income',
+			y: data.income
 		},
 		{
-			x: 'Credit',
-			y: data.credit
+			x: 'Expense',
+			y: data.expense
 		},
 	];
 
@@ -78,8 +78,8 @@ const Layout: React.FC<Props> = (props) => {
 					<View style={styles.row} key={i}>
 						<View style={
 							item.x === 'Balance' && [styles.legend, styles.balance] ||
-							item.x === 'Debit' && [styles.legend, styles.debit] ||
-							item.x === 'Credit' && [styles.legend, styles.credit]
+							item.x === 'Income' && [styles.legend, styles.income] ||
+							item.x === 'Expense' && [styles.legend, styles.expense]
 						} />
 						<Text style={styles.textLegend}>
 							{item.x}
@@ -136,10 +136,10 @@ const styles = StyleSheet.create({
 	balance: {
 		backgroundColor: Colors.PRIMARY,
 	},
-	debit: {
+	income: {
 		backgroundColor: Colors.SUCCESS,
 	},
-	credit: {
+	expense: {
 		backgroundColor: Colors.ALERT,
 	},
 	textLegend: {

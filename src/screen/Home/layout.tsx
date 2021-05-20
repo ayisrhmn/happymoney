@@ -106,12 +106,12 @@ const Layout: React.FC<Props> = (props) => {
   };
 
 	const sumData = {
-		debit:
+		income:
 			data
 				.filter((v: any) => {
 					const filterBy = {
 						date: moment(v.date).format('MMMM YYYY') === moment().format('MMMM YYYY'),
-						type: v.type === 'Debit',
+						type: v.type === 'Income',
 					}
 
 					if (filterBy.date && filterBy.type) {
@@ -121,12 +121,12 @@ const Layout: React.FC<Props> = (props) => {
 					return;
 				})
 				.reduce((i: any, o: any) => o.total + i, 0),
-		credit:
+		expense:
 			data
 				.filter((v: any) => {
 					const filterBy = {
 						date: moment(v.date).format('MMMM YYYY') === moment().format('MMMM YYYY'),
-						type: v.type === 'Credit',
+						type: v.type === 'Expense',
 					}
 
 					if (filterBy.date && filterBy.type) {
@@ -138,17 +138,17 @@ const Layout: React.FC<Props> = (props) => {
 				.reduce((i: any, o: any) => o.total + i, 0),
 	};
 
-	// get most debit function
-	const calculateMostDebit = () => {
+	// get most income function
+	const calculateMostIncome = () => {
 		let getData = [] as any;
 
 		category.map((ct: any) => {
-			let getDebit =
+			let getIncome =
 				data
 					.filter((v: any) => {
 						const filterBy = {
 							date: moment(v.date).format('MMMM YYYY') === moment().format('MMMM YYYY'),
-							type: v.type === 'Debit',
+							type: v.type === 'Income',
 							category: v.category === ct.category,
 						}
 
@@ -164,7 +164,7 @@ const Layout: React.FC<Props> = (props) => {
 				...getData,
 				{
 					category: ct.category,
-					total: getDebit,
+					total: getIncome,
 				},
 			];
 		});
@@ -172,32 +172,32 @@ const Layout: React.FC<Props> = (props) => {
 		return getData;
 	};
 
-	const getMostDebit = () => {
+	const getMostIncome = () => {
 		let totalMax = Math.max.apply(
-			Math, calculateMostDebit().map((o: any) => {
+			Math, calculateMostIncome().map((o: any) => {
 				return o.total;
 			})
 		);
 
-		let mostDebit = calculateMostDebit().filter((o: any) => {
+		let mostIncome = calculateMostIncome().filter((o: any) => {
 			return o.total == totalMax;
 		});
 
-		return mostDebit[0];
+		return mostIncome[0];
 	};
-	// end get most debit function
+	// end get most income function
 
-	// get most credit function
-	const calculateMostCredit = () => {
+	// get most expense function
+	const calculateMostExpense = () => {
 		let getData = [] as any;
 
 		category.map((ct: any) => {
-			let getCredit =
+			let getExpense =
 				data
 					.filter((v: any) => {
 						const filterBy = {
 							date: moment(v.date).format('MMMM YYYY') === moment().format('MMMM YYYY'),
-							type: v.type === 'Credit',
+							type: v.type === 'Expense',
 							category: v.category === ct.category,
 						}
 
@@ -213,7 +213,7 @@ const Layout: React.FC<Props> = (props) => {
 				...getData,
 				{
 					category: ct.category,
-					total: getCredit,
+					total: getExpense,
 				},
 			];
 		});
@@ -221,18 +221,18 @@ const Layout: React.FC<Props> = (props) => {
 		return getData;
 	};
 
-	const getMostCredit = () => {
+	const getMostExpense = () => {
 		let totalMax = Math.max.apply(
-			Math, calculateMostCredit().map((o: any) => {
+			Math, calculateMostExpense().map((o: any) => {
 				return o.total;
 			})
 		);
 
-		let mostCredit = calculateMostCredit().filter((o: any) => {
+		let mostExpense = calculateMostExpense().filter((o: any) => {
 			return o.total == totalMax;
 		});
 
-		return mostCredit[0];
+		return mostExpense[0];
 	};
 	// end get most credit function
 
@@ -249,8 +249,8 @@ const Layout: React.FC<Props> = (props) => {
 			/>
 
 			<CardMost
-				mostDebit={getMostDebit()}
-				mostCredit={getMostCredit()}
+				mostIncome={getMostIncome()}
+				mostExpense={getMostExpense()}
 			/>
 
 			<CardMenu

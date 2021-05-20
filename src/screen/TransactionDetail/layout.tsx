@@ -83,8 +83,8 @@ const Layout: React.FC<Props> = (props) => {
 	};
 
 	const typeData = [
-		'Debit',
-		'Credit',
+		'Income',
+		'Expense',
 	];
 
 	const {
@@ -148,6 +148,12 @@ const Layout: React.FC<Props> = (props) => {
 			})
 	};
 
+	const sortingCategory = () => {
+		return dataCategory.sort((a: any, b: any) => {
+			return a.toLowerCase() < b.toLowerCase() ? -1 : 1;
+		});
+	};
+
   return (
     <View style={styles.container}>
 			<View style={styles.inputWrapper}>
@@ -207,7 +213,7 @@ const Layout: React.FC<Props> = (props) => {
 				<Select
 					name={'Category'}
 					placeholder={'Select your category transaction'}
-					data={dataCategory}
+					data={sortingCategory()}
 					closeOnSelection={true}
 					disabled={disabled}
 					value={dataDetail.category}
@@ -247,7 +253,7 @@ const Layout: React.FC<Props> = (props) => {
 
 				<Select
 					name={'Type'}
-					placeholder={'Select your type Debit or Credit'}
+					placeholder={'Select your type Income or Expense'}
 					data={typeData}
 					closeOnSelection={true}
 					disabled={disabled}

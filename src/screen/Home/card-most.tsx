@@ -5,19 +5,19 @@ import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 import {Colors, Helper, Mixins} from '@utils/index';
 
 type Props = {
-	mostDebit: any;
-	mostCredit: any;
+	mostIncome: any;
+	mostExpense: any;
 };
 
 const Layout: React.FC<Props> = (props) => {
-  const {mostDebit, mostCredit} = props;
+  const {mostIncome, mostExpense} = props;
 
   return (
 		<View style={[styles.row, {
 			justifyContent: 'space-between',
 			marginRight: Mixins.scaleSize(12),
 		}]}>
-			{(mostDebit !== undefined && mostDebit.total !== 0) && (
+			{(mostIncome !== undefined && mostIncome.total !== 0) && (
 				<View
 					style={[
 						styles.maxCardContainer,
@@ -26,7 +26,7 @@ const Layout: React.FC<Props> = (props) => {
 					]}
 				>
 					<Text style={styles.cardTitle}>
-						Most Debit
+						Most Income
 					</Text>
 
 					<View style={styles.row}>
@@ -36,7 +36,7 @@ const Layout: React.FC<Props> = (props) => {
 							color={Colors.WHITE}
 						/>
 						<Text style={styles.cardText}>
-							{mostDebit?.category}
+							{mostIncome?.category}
 						</Text>
 					</View>
 
@@ -47,13 +47,13 @@ const Layout: React.FC<Props> = (props) => {
 							color={Colors.WHITE}
 						/>
 						<Text style={styles.cardText}>
-							{Helper.numberWithSeparator(mostDebit?.total)}
+							{Helper.numberWithSeparator(mostIncome?.total)}
 						</Text>
 					</View>
 				</View>
 			)}
 
-			{(mostCredit !== undefined && mostCredit.total !== 0) && (
+			{(mostExpense !== undefined && mostExpense.total !== 0) && (
 				<View
 					style={[
 						styles.maxCardContainer,
@@ -62,7 +62,7 @@ const Layout: React.FC<Props> = (props) => {
 					]}
 				>
 					<Text style={styles.cardTitle}>
-						Most Credit
+						Most Expense
 					</Text>
 
 					<View style={styles.row}>
@@ -72,7 +72,7 @@ const Layout: React.FC<Props> = (props) => {
 							color={Colors.WHITE}
 						/>
 						<Text style={styles.cardText}>
-							{mostCredit?.category}
+							{mostExpense?.category}
 						</Text>
 					</View>
 
@@ -83,7 +83,7 @@ const Layout: React.FC<Props> = (props) => {
 							color={Colors.WHITE}
 						/>
 						<Text style={styles.cardText}>
-							{Helper.numberWithSeparator(mostCredit?.total)}
+							{Helper.numberWithSeparator(mostExpense?.total)}
 						</Text>
 					</View>
 				</View>
