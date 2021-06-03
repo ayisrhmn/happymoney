@@ -377,6 +377,7 @@ const Layout: React.FC<Props> = (props) => {
 									category: selectedFilter.category,
 								});
 								filterClose();
+								getData();
 							}}
 							style={{marginHorizontal: Mixins.scaleSize(14)}}
 						>
@@ -417,6 +418,7 @@ const Layout: React.FC<Props> = (props) => {
 											sort: value,
 										});
 										sortClose();
+										getData();
 									}}
 									value={selectedFilter.sort}
 								>
@@ -462,15 +464,31 @@ const Layout: React.FC<Props> = (props) => {
 								{sorting().map((item: any) => (
 									<TouchableOpacity
 										onPress={() => {
-											setSelectedFilter({
-												...selectedFilter,
-												category: item.category,
+											let found = [selectedFilter.category].find((v: any) => {
+												return v === item.category;
 											});
-											setValFilter({
-												...valFilter,
-												category: item.category,
-											});
+
+											if (found) {
+												setSelectedFilter({
+													...selectedFilter,
+													category: '',
+												});
+												setValFilter({
+													...valFilter,
+													category: '',
+												});
+											} else {
+												setSelectedFilter({
+													...selectedFilter,
+													category: item.category,
+												});
+												setValFilter({
+													...valFilter,
+													category: item.category,
+												});
+											}
 											categoryClose();
+											getData();
 										}}
 										key={item.id}
 									>
@@ -591,6 +609,7 @@ const Layout: React.FC<Props> = (props) => {
 										type: 'Income',
 									});
 								}
+								getData();
 							}}
 						>
 							<View style={
@@ -642,6 +661,7 @@ const Layout: React.FC<Props> = (props) => {
 										type: 'Expense',
 									});
 								}
+								getData();
 							}}
 						>
 							<View style={
