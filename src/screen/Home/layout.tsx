@@ -28,6 +28,13 @@ const Layout: React.FC<Props> = (props) => {
 	const [category, setCategory] = React.useState([]) as any;
 	const [data, setData] = React.useState([]) as any;
 
+	const [date, setDate] = React.useState(new Date());
+	const [displayDate, setDisplayDate] = React.useState('');
+	const [selectedMonth, setSelectedMonth] = React.useState(
+    moment().format('YYYY/MM'),
+  );
+	const [isDatePickerShow, setDatePickerShow] = React.useState(false);
+
 	const ctx = useContext(ContainerContext);
 
 	React.useLayoutEffect(() => {
@@ -42,6 +49,9 @@ const Layout: React.FC<Props> = (props) => {
 
 	React.useEffect(() => {
 		if (isFocused) {
+			setDate(date);
+			setDisplayDate(moment(date).format('MMMM YYYY'));
+			setSelectedMonth(moment(date).format('YYYY/MM'));
 			getData();
 		}
 
@@ -105,12 +115,24 @@ const Layout: React.FC<Props> = (props) => {
 			.then(() => setRefresh(false));
   };
 
+	const handleConfirm = (date: any) => {
+    setSelectedMonth(date.replace(' ', '/'));
+    const DateString2Date = new Date(date.replace(' ', '-') + '-01');
+    const displayDateFormat = moment(DateString2Date)
+      .locale('en')
+      .format('MMMM YYYY');
+    setDisplayDate(displayDateFormat);
+    setDate(DateString2Date);
+    setDatePickerShow(false);
+		getData();
+  };
+
 	const sumData = {
 		income:
 			data
 				.filter((v: any) => {
 					const filterBy = {
-						date: moment(v.date).format('MMMM YYYY') === moment().format('MMMM YYYY'),
+						date: moment(v.date).format('MMMM YYYY') === displayDate,
 						type: v.type === 'Income',
 					}
 
@@ -125,7 +147,7 @@ const Layout: React.FC<Props> = (props) => {
 			data
 				.filter((v: any) => {
 					const filterBy = {
-						date: moment(v.date).format('MMMM YYYY') === moment().format('MMMM YYYY'),
+						date: moment(v.date).format('MMMM YYYY') === displayDate,
 						type: v.type === 'Expense',
 					}
 
@@ -147,7 +169,7 @@ const Layout: React.FC<Props> = (props) => {
 				data
 					.filter((v: any) => {
 						const filterBy = {
-							date: moment(v.date).format('MMMM YYYY') === moment().format('MMMM YYYY'),
+							date: moment(v.date).format('MMMM YYYY') === displayDate,
 							type: v.type === 'Income',
 							category: v.category === ct.category,
 						}
@@ -196,7 +218,7 @@ const Layout: React.FC<Props> = (props) => {
 				data
 					.filter((v: any) => {
 						const filterBy = {
-							date: moment(v.date).format('MMMM YYYY') === moment().format('MMMM YYYY'),
+							date: moment(v.date).format('MMMM YYYY') === displayDate,
 							type: v.type === 'Expense',
 							category: v.category === ct.category,
 						}
@@ -246,6 +268,11 @@ const Layout: React.FC<Props> = (props) => {
 			<CardSummary
 				data={sumData}
 				refresh={refresh}
+				setDatePickerShow={setDatePickerShow}
+				displayDate={displayDate}
+				isDatePickerShow={isDatePickerShow}
+				selectedMonth={selectedMonth}
+				handleConfirm={handleConfirm}
 			/>
 
 			<CardMost
@@ -257,6 +284,7 @@ const Layout: React.FC<Props> = (props) => {
 				user={dataUser}
 				category={category}
 				navigation={navigation}
+				date={date}
 			/>
     </View>
   );

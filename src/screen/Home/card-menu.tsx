@@ -11,10 +11,11 @@ type Props = {
 	navigation: any;
 	user: any;
 	category: any;
+	date: any
 };
 
 const Layout: React.FC<Props> = (props) => {
-  const {navigation, user, category} = props;
+  const {navigation, user, category, date} = props;
 
 	const listMenu: Array<any> = [
 		{
@@ -43,7 +44,10 @@ const Layout: React.FC<Props> = (props) => {
 								type: 'warning',
 							});
 						} else {
-							navigation.navigate(item.navigate, user);
+							navigation.navigate(item.navigate, {
+								...user,
+								date: date,
+							});
 						}
 					}}
 					key={i}

@@ -1,22 +1,41 @@
 import React from 'react';
-import {View, StyleSheet, Text} from 'react-native';
-import {ActivityIndicator} from 'react-native-paper';
-import Ionicons from 'react-native-vector-icons/Ionicons';
+import {
+	View,
+	StyleSheet,
+	Text,
+	TouchableOpacity,
+
+} from 'react-native';
+import {ActivityIndicator, TextInput} from 'react-native-paper';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
+import DatePicker from 'react-native-modern-datepicker';
 
 import Card from '@components/card';
+import Modal from '@components/modal';
 import {Colors, Helper, Mixins} from '@utils/index';
 
 import {VictoryPie, VictoryTheme} from 'victory-native';
-import moment from 'moment';
 
 type Props = {
 	data: any;
 	refresh: any;
+	setDatePickerShow: any;
+	displayDate: any;
+	isDatePickerShow: any;
+	selectedMonth: any;
+	handleConfirm: any;
 };
 
 const Layout: React.FC<Props> = (props) => {
-  const {data, refresh} = props;
+  const {
+		data,
+		refresh,
+		setDatePickerShow,
+		displayDate,
+		isDatePickerShow,
+		selectedMonth,
+		handleConfirm,
+	} = props;
 
 	const balance = () => {
 		return data.income - data.expense;
@@ -63,17 +82,31 @@ const Layout: React.FC<Props> = (props) => {
 						</Text>
 					</View>
 				</View>
-				<View style={styles.row}>
-					<Ionicons
-						name={'time'}
-						size={Mixins.scaleFont(24)}
-						color={Colors.BLACK}
-					/>
-					<View>
-						<Text style={styles.date}>
-							{moment().format('MMMM YYYY')}
-						</Text>
-					</View>
+				<View>
+					<TouchableOpacity onPress={() => setDatePickerShow(true)}>
+						<TextInput
+							mode={'flat'}
+							value={displayDate}
+							style={styles.inputDate}
+							editable={false}
+						/>
+					</TouchableOpacity>
+
+					<Modal
+						show={isDatePickerShow}
+						loading={false}
+						onClose={() => setDatePickerShow(false)}>
+						<DatePicker
+							mode="monthYear"
+							selectorStartingYear={2000}
+							current={selectedMonth}
+							onMonthYearChange={(selectedDate: any) => handleConfirm(selectedDate)}
+							options={{
+								textHeaderColor: Colors.PRIMARY,
+								mainColor: Colors.PRIMARY,
+							}}
+						/>
+					</Modal>
 				</View>
 			</View>
 
@@ -93,7 +126,7 @@ const Layout: React.FC<Props> = (props) => {
 						height={Mixins.scaleSize(230)}
 						theme={VictoryTheme.material}
 						colorScale={[Colors.SUCCESS, Colors.ALERT]}
-						labels={({datum}) => `${datum.y.toFixed(2) * 100}%`}
+						labels={({datum}) => `${(datum.y * 100).toFixed(0)}%`}
 						style={{
 							labels: {
 								fontSize: Mixins.scaleSize(14),
@@ -147,6 +180,13 @@ const styles = StyleSheet.create({
 	cardContainer: {
 		marginHorizontal: Mixins.scaleSize(12),
 		padding: 0,
+	},
+	inputDate: {
+		backgroundColor: 'transparent',
+		height: Mixins.scaleSize(32),
+		maxHeight: Mixins.scaleSize(32),
+		fontSize: Mixins.scaleFont(16),
+		color: Colors.BLACK,
 	},
 	chartContainer: {
 		alignItems: 'center',

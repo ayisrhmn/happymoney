@@ -112,13 +112,17 @@ const Select = (props: LayoutProps) => {
 						: props?.value
 				}
 				error={props?.error}
-        onPress={() => {
-          setIsModalVisible(true);
+        onPress={
+					!props?.disabled
+						? () => {
+								setIsModalVisible(true);
 
-          if (onOpen) {
-            onOpen();
-          }
-        }}
+								if (onOpen) {
+									onOpen();
+								}
+							}
+						: undefined
+				}
       />
 
       <Modal
