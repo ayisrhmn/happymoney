@@ -191,7 +191,7 @@ const Layout: React.FC<Props> = (props) => {
 			];
 		});
 
-		return getData;
+		return getData.filter((o: any) => o.total !== 0);
 	};
 
 	const getMostIncome = () => {
@@ -240,7 +240,7 @@ const Layout: React.FC<Props> = (props) => {
 			];
 		});
 
-		return getData;
+		return getData.filter((o: any) => o.total !== 0);
 	};
 
 	const getMostExpense = () => {
@@ -276,6 +276,9 @@ const Layout: React.FC<Props> = (props) => {
 			/>
 
 			<CardMost
+				navigation={navigation}
+				calculateMostIncome={calculateMostIncome()}
+				calculateMostExpense={calculateMostExpense()}
 				mostIncome={getMostIncome()}
 				mostExpense={getMostExpense()}
 			/>

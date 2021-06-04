@@ -1,16 +1,25 @@
 import React from 'react';
-import {View, StyleSheet, Text} from 'react-native';
+import {View, StyleSheet, Text, TouchableOpacity} from 'react-native';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 
 import {Colors, Helper, Mixins} from '@utils/index';
 
 type Props = {
+	navigation: any;
+	calculateMostIncome: any;
+	calculateMostExpense: any;
 	mostIncome: any;
 	mostExpense: any;
 };
 
 const Layout: React.FC<Props> = (props) => {
-  const {mostIncome, mostExpense} = props;
+  const {
+		navigation,
+		calculateMostIncome,
+		calculateMostExpense,
+		mostIncome,
+		mostExpense,
+	} = props;
 
   return (
 		<View style={[styles.row, {
@@ -18,12 +27,17 @@ const Layout: React.FC<Props> = (props) => {
 			marginRight: Mixins.scaleSize(12),
 		}]}>
 			{(mostIncome !== undefined && mostIncome.total !== 0) && (
-				<View
+				<TouchableOpacity
 					style={[
 						styles.maxCardContainer,
 						styles.maxDebit,
 						{marginLeft: Mixins.scaleSize(12)}
 					]}
+					onPress={() => navigation.navigate('MostDetail', {
+						title: 'Most Income Detail',
+						subtitle: 'Most income',
+						data: calculateMostIncome,
+					})}
 				>
 					<Text style={styles.cardTitle}>
 						Most Income
@@ -50,16 +64,21 @@ const Layout: React.FC<Props> = (props) => {
 							{Helper.numberWithSeparator(mostIncome?.total)}
 						</Text>
 					</View>
-				</View>
+				</TouchableOpacity>
 			)}
 
 			{(mostExpense !== undefined && mostExpense.total !== 0) && (
-				<View
+				<TouchableOpacity
 					style={[
 						styles.maxCardContainer,
 						styles.maxCredit,
 						{marginLeft: Mixins.scaleSize(12)}
 					]}
+					onPress={() => navigation.navigate('MostDetail', {
+						title: 'Most Expense Detail',
+						subtitle: 'Most expense',
+						data: calculateMostExpense,
+					})}
 				>
 					<Text style={styles.cardTitle}>
 						Most Expense
@@ -86,7 +105,7 @@ const Layout: React.FC<Props> = (props) => {
 							{Helper.numberWithSeparator(mostExpense?.total)}
 						</Text>
 					</View>
-				</View>
+				</TouchableOpacity>
 			)}
 		</View>
   );
