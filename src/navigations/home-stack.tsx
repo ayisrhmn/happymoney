@@ -17,6 +17,7 @@ import TransactionDetail from '@screen/TransactionDetail';
 import Profile from '@screen/Profile';
 import EditProfile from '@screen/EditProfile';
 import ChangePassword from '@screen/ChangePassword';
+import MostDetail from '@screen/MostDetail';
 
 const Stack = createStackNavigator();
 
@@ -116,6 +117,14 @@ function App() {
           options={{
             headerTitle: 'Change Password',
           }}
+        />
+
+				<Stack.Screen
+          name={'MostDetail'}
+          component={MostDetail}
+          options={({route}) => ({
+						headerTitle: route?.params?.name,
+					})}
         />
 
       </Stack.Navigator>
