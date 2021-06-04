@@ -221,7 +221,8 @@ const Layout: React.FC<Props> = (props) => {
 		<>
 			<Modalize
 				ref={filterRef}
-				modalHeight={450}
+				modalHeight={Mixins.scaleSize(450)}
+				scrollViewProps={{showsVerticalScrollIndicator: false}}
 				onOpen={() => {
 					setSelectedFilter({
 						sort: valFilter.sort,
@@ -389,7 +390,8 @@ const Layout: React.FC<Props> = (props) => {
 
 			<Modalize
 				ref={sortRef}
-				modalHeight={160}
+				modalHeight={Mixins.scaleSize(160)}
+				scrollViewProps={{scrollEnabled: false}}
 				onOpen={() => {
 					setSelectedFilter({
 						sort: valFilter.sort,
@@ -443,7 +445,8 @@ const Layout: React.FC<Props> = (props) => {
 
 			<Modalize
 				ref={categoryRef}
-				modalHeight={240}
+				modalHeight={Mixins.scaleSize(240)}
+				scrollViewProps={{scrollEnabled: false}}
 				onOpen={() => {
 					setSelectedFilter({
 						sort: valFilter.sort,
