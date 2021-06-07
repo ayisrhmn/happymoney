@@ -191,7 +191,7 @@ const styles = StyleSheet.create({
 		textAlignVertical: 'center',
 	},
 	rank: {
-		width: Mixins.scaleSize(25),
+		width: Mixins.scaleSize(32),
 	},
 	ctName: {
 		marginLeft: Mixins.scaleSize(15),
